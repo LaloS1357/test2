@@ -9,7 +9,7 @@ from difflib import SequenceMatcher
 
 # Xác định thiết bị (CPU hoặc GPU nếu có)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+a
 # Tải dữ liệu tuyển sinh
 try:
     with open('admissions_data.json', 'r', encoding='utf-8') as f:
