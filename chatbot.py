@@ -42,6 +42,10 @@ def find_answer_and_media(question):
                     best_match = item
 
     if best_match and best_score >= 0.5:
+        # Chuyển đổi 'images' thành danh sách nếu nó là một chuỗi
+        if "images" in best_match and isinstance(best_match["images"], str):
+            best_match["images"] = [best_match["images"]]
+
         # Kiểm tra cả hình ảnh và video
         has_images = "images" in best_match and best_match["images"]
         has_video = "video_url" in best_match and best_match["video_url"]
@@ -56,10 +60,12 @@ def find_answer_and_media(question):
         elif has_images:
             images = best_match.get('images', [])
             captions = best_match.get('captions', [])
-            valid_images = [img for img in images if isinstance(img, str) and os.path.exists(img)]
+            valid_images = [img for img in images if isinstance(img, str) and os.path.exists(img) and img.strip() != ""]
             valid_captions = captions[:len(valid_images)] if len(captions) >= len(valid_images) else captions + [
                 f"Ảnh {i + 1}" for i in range(len(valid_images) - len(captions))]
             return best_match.get('answer', "Không có câu trả lời."), "image", (valid_images, valid_captions)
+        else:  # Thêm khối else này để xử lý câu trả lời chỉ có văn bản
+            return best_match.get('answer', "Không có câu trả lời."), "text", None
 
     return "Tôi không có thông tin chính xác về câu hỏi này. Vui lòng thử lại hoặc liên hệ văn phòng tuyển sinh.", "text", None
 
@@ -80,13 +86,14 @@ def main():
             if "video" in message:
                 st.video(message["video"])
             if "images" in message:
-                valid_images = [img for img in message["images"] if img is not None]
-                if valid_images:
-                    num_cols = min(len(valid_images), 3)
+                valid_images_paths = [img_path for img_path in message["images"] if
+                                      isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
+                if valid_images_paths:
+                    num_cols = min(len(valid_images_paths), 3)
                     cols = st.columns(num_cols)
-                    for i, img in enumerate(valid_images):
+                    for i, img_path in enumerate(valid_images_paths):
                         with cols[i % num_cols]:
-                            st.image(img,
+                            st.image(img_path,
                                      caption=message["captions"][i] if i < len(message["captions"]) else f"Ảnh {i + 1}",
                                      use_container_width=True)
 
@@ -104,13 +111,15 @@ def main():
 
                 # Hiển thị hình ảnh
                 if images:
-                    valid_images = [Image.open(img) for img in images if os.path.exists(img)]
-                    if valid_images:
-                        num_cols = min(len(valid_images), 3)
+                    valid_images_paths = [img_path for img_path in images if
+                                          isinstance(img_path, str) and os.path.exists(
+                                              img_path) and img_path.strip() != ""]
+                    if valid_images_paths:
+                        num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
-                        for i, img in enumerate(valid_images):
+                        for i, img_path in enumerate(valid_images_paths):
                             with cols[i % num_cols]:
-                                st.image(img, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
+                                st.image(img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
                                          use_container_width=True)
 
                 # Hiển thị video
@@ -125,13 +134,15 @@ def main():
                 st.markdown(response)
                 images, captions = media_content
                 if images:
-                    valid_images = [Image.open(img) for img in images if os.path.exists(img)]
-                    if valid_images:
-                        num_cols = min(len(images), 3)
+                    valid_images_paths = [img_path for img_path in images if
+                                          isinstance(img_path, str) and os.path.exists(
+                                              img_path) and img_path.strip() != ""]
+                    if valid_images_paths:
+                        num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
-                        for i, img in enumerate(images):
+                        for i, img_path in enumerate(valid_images_paths):
                             with cols[i % num_cols]:
-                                st.image(img, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
+                                st.image(img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
                                          use_container_width=True)
                 st.session_state.messages.append(
                     {"role": "assistant", "text": response, "images": images, "captions": captions})
@@ -139,7 +150,6 @@ def main():
                 st.markdown(response)
                 st.session_state.messages.append({"role": "assistant", "text": response})
 
-    # Thêm nút câu hỏi gợi ý và nút xóa lịch sử
     col1, col2 = st.columns(2)
     with col1:
         if st.button("Gợi ý: Giới thiệu về trường", key="suggested_question_button"):

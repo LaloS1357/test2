@@ -394,10 +394,7 @@
       "captions": null
     },
     {
-      "question": [
-        "mạng",
-        "wifi"
-      ],
+      "question": ["mạng", "wifi"],
       "answer": "Wifi mạnh, phủ sóng toàn trường, mức phí thu cho việc sử dụng wifi dự kiến cho 1 HS là 3.000 đồng/tháng.",
       "images": null,
       "captions": null
