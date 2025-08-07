@@ -652,6 +652,48 @@
       "images": ["images/5os.jpg"],
       "captions": ["Toàn cảnh khuôn viên trường"],
       "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    },
+    {
+      "question":["vắng có phép buổi 1","vắng có phép buổi 2","vắng có phép sáng","vănng có phép chiều"],
+      "answer": "học sinh sẽ không bị trừ điểm hạnh kiểm nếu nghỉ học có minh chứng(giấy khám bệnh của phòng khám, bệnh viện, giấy ra viện, lệnh triệu tập nghĩa vụ quân sự)",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question":["các lỗi liên quan đến học tập được ghi nhận trong sổ đầu bài","bị ghi sổ đầu bài"],
+      "answer": "học sinh sẽ không bị trừ điểm hạnh kiểm nếu không học bài, không làm bài, không mang sách, không mang đề cương những có thể sẽ nhận hình phạt từ giáo viên chủ nhiệm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["các lỗi liên quan đến bán trú","các lỗi về bán trú"],
+      "answer": "học sinh sẽ không bị trừ điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["đi trễ sáng","đi trễ chiều","đi trễ buổi 1","đi trễ buổi 2"],
+      "answer": "học sinh đi trễ 2 lần đầu sẽ không bị trừ điểm hạnh kiểm avf từ lần thứ 3 sẽ bị trừ 0.25 điểm hạnh kiểm(bao gồm trễ có phép",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["vắng có phép buổi 1","văng có phép buổi 2","vắng có phép sáng","vắng có phép chiều","quên điểm danh qua camera buổi 1","quên điểm danh qua camera buổi 2","quên điểm danh qua camera sáng","quên điểm danh qua camera chiều"],
+      "answer": "học sinh vi phạm sẽ bị trừ 0.25 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["chạy xe trong sân truờng","chạy xe trong trường"],
+      "answer": "học sinh không được phép chạy xe trong sân trường, nếu vị phạm học sinh sẽ bị trừ 0.5 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["ăn trong giờ học","ăn vụng","ăn trong tiết","áo dài sai quy định","áo khoác sai quy định","bảng tên sai quy định","bỏ áo ngoài quân","chơi trong giờ học","chơi trong tiết học","để móng tay dài","để móng chân dài","giày sai quy định","giỡn trong giờ học","đùa giỡn trong giờ học","học bài môn khác","không bảng tên","không giày thể dục","không nghiêm túc giờ sinh hoạt ở sân","không nghiêm túc trong giờ học","mang balo, cặp sách sai quy định","nằm úp mặt lên bàn","ngủ trong giờ học","qua khu vực lớp khác","quần tây sai quy định","quần thể dục sai quy định","ra hành lang giờ truy bài","sai đồng phục chiều","sai đồng phục sáng","sơn móng tay móng chân","tóc có màu","tóc dài","tóc mái dài","tóc sai quy định","trang điểm đi học","tự ý đổi chỗ","tự ý ra khỏi lớp","vào lớp sau thầy cô","vô căn tin vào giờ học","chọi phấn","xả rác"],
+      "answer": "học sinh vi phạm sẽ bị trừ 1 điểm hạnh kiểm ",
+      "images": null,
+      "captions": null
     }
   ]
 }
