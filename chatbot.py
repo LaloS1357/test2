@@ -3,11 +3,11 @@ import streamlit as st
 import os
 import torch
 import re
-from difflib import SequenceMatcher
 from PIL import Image
+from sentence_transformers import SentenceTransformer, util
 
 # Xác định thiết bị
-device = 0 if torch.cuda.is_available() else -1
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Tải dữ liệu tuyển sinh
 try:
@@ -17,36 +17,59 @@ except FileNotFoundError:
     st.error("Không tìm thấy file admissions_data.json. Vui lòng kiểm tra lại.")
     admissions_data = {"questions": []}
 
+# Tải mô hình Transformer
+try:
+    @st.cache_resource
+    def load_model():
+        model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-mpnet-base-v2', device=device)
+        return model
 
-# Hàm tính độ tương đồng
-def similarity(a, b):
-    return SequenceMatcher(None, a, b).ratio()
+
+    model = load_model()
+except Exception as e:
+    st.error(f"Lỗi khi tải mô hình Transformer: {e}")
+    model = None
+
+# Tạo embedding cho tất cả các câu hỏi trong dữ liệu để tăng tốc độ
+if model and 'question_embeddings' not in st.session_state:
+    st.session_state.question_texts = []
+    st.session_state.question_data_map = {}
+    for item in admissions_data['questions']:
+        questions = item['question'] if isinstance(item['question'], list) else [item['question']]
+        for q in questions:
+            st.session_state.question_texts.append(q)
+            st.session_state.question_data_map[q] = item
+
+    st.session_state.question_embeddings = model.encode(st.session_state.question_texts, convert_to_tensor=True)
 
 
 # Hàm tìm câu trả lời, hình ảnh và video
 def find_answer_and_media(question):
+    if not model:
+        return "Chatbot đang gặp sự cố với mô hình ngôn ngữ. Vui lòng thử lại sau.", "text", None
+
     if not isinstance(question, str):
         question = str(question)
     question = re.sub(r'\s+', ' ', question.strip().lower())
 
-    best_match = None
-    best_score = 0.0
-    for item in admissions_data['questions']:
-        questions = item['question'] if isinstance(item['question'], list) else [item['question']]
-        for q in questions:
-            if isinstance(q, str):
-                normalized_q = re.sub(r'\s+', ' ', q.strip().lower())
-                score = similarity(question, normalized_q)
-                if normalized_q == question or score > best_score:
-                    best_score = score
-                    best_match = item
+    # Tạo embedding cho câu hỏi của người dùng
+    query_embedding = model.encode(question, convert_to_tensor=True)
 
-    if best_match and best_score >= 0.5:
-        # Chuyển đổi 'images' thành danh sách nếu nó là một chuỗi
+    # Tính độ tương đồng cosine giữa câu hỏi người dùng và tất cả các câu hỏi đã có
+    # Sử dụng util.pytorch_cos_sim cho tốc độ cao hơn
+    cosine_scores = util.pytorch_cos_sim(query_embedding, st.session_state.question_embeddings)[0]
+
+    best_score = torch.max(cosine_scores).item()
+    best_index = torch.argmax(cosine_scores).item()
+
+    best_match_text = st.session_state.question_texts[best_index]
+    best_match = st.session_state.question_data_map[best_match_text]
+
+    # Ngưỡng độ tương đồng được điều chỉnh cho cosine similarity
+    if best_score >= 0.5:
         if "images" in best_match and isinstance(best_match["images"], str):
             best_match["images"] = [best_match["images"]]
 
-        # Kiểm tra cả hình ảnh và video
         has_images = "images" in best_match and best_match["images"]
         has_video = "video_url" in best_match and best_match["video_url"]
 
@@ -64,13 +87,13 @@ def find_answer_and_media(question):
             valid_captions = captions[:len(valid_images)] if len(captions) >= len(valid_images) else captions + [
                 f"Ảnh {i + 1}" for i in range(len(valid_images) - len(captions))]
             return best_match.get('answer', "Không có câu trả lời."), "image", (valid_images, valid_captions)
-        else:  # Thêm khối else này để xử lý câu trả lời chỉ có văn bản
+        else:
             return best_match.get('answer', "Không có câu trả lời."), "text", None
 
     return "Tôi không có thông tin chính xác về câu hỏi này. Vui lòng thử lại hoặc liên hệ văn phòng tuyển sinh.", "text", None
 
 
-# Giao diện Streamlit
+# Giao diện Streamlit (phần này giữ nguyên)
 def main():
     st.title("Chatbot Tư vấn Tuyển sinh")
     st.markdown("Hỏi về thông tin tuyển sinh và xem hình ảnh hoặc video liên quan!")
@@ -78,7 +101,6 @@ def main():
     if 'messages' not in st.session_state:
         st.session_state.messages = []
 
-    # Hiển thị lịch sử tin nhắn
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             if "text" in message:
@@ -109,7 +131,6 @@ def main():
                 images, captions, video_url = media_content
                 st.markdown(response)
 
-                # Hiển thị hình ảnh
                 if images:
                     valid_images_paths = [img_path for img_path in images if
                                           isinstance(img_path, str) and os.path.exists(
@@ -122,7 +143,6 @@ def main():
                                 st.image(img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
                                          use_container_width=True)
 
-                # Hiển thị video
                 st.video(video_url)
                 st.session_state.messages.append(
                     {"role": "assistant", "text": response, "images": images, "captions": captions, "video": video_url})

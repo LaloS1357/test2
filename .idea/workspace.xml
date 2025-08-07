@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="90cbbf4a-2178-4efc-b454-fe669178cb24" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admissions_data.json" beforeDir="false" afterPath="$PROJECT_DIR$/admissions_data.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +40,6 @@
     &quot;Python.chatbot.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/dever/Downloads/PythonProjectTT-20250805T065054Z-1-001/PythonProjectTT&quot;
@@ -78,7 +77,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-03e874896e21-d902c0275401-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-252.23892.439" />
+        <option value="bundled-python-sdk-4c141bd692a7-e2d783800521-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-251.26927.90" />
       </set>
     </attachedChunks>
   </component>
