@@ -694,6 +694,180 @@
       "answer": "học sinh vi phạm sẽ bị trừ 1 điểm hạnh kiểm ",
       "images": null,
       "captions": null
+    },
+    {
+      "question": ["bông tai sai quy định","bông tai không đúng quy định"],
+      "answer": "bông tai sai quy định đối với học sinh nữ sẽ bị trừu 1 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["đeo bông tai","đeo khuyên tai"],
+      "answer": "đeo bông tai ở học sinh nam sẽ bị trừ 1 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["cho thể thao ở hành lang","chơi thể thao trong giờ học"],
+      "answer": "học sinh chơi đá cầu, đá banh ở hành lang hoặc chơi thể thao ở sân, trong lớp giữa các tiết học sẽ bị trừ 1 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["đi dép","mang dép"],
+      "answer": "học sinh mang dép sục, crocsdđi học sẽ bị trừ 1 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["làm mất trật tự trong giờ học","làm ồn trong giờ học"],
+      "answer": "học sinh nói chuyển, phát biểu linh tinh, nói leo, hát, la hét hay ném đồ đạc trong gờ học sẽ bị trừ 1 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["làm việc riêng trong giờ học","làm việc riêng trong tiết học"],
+      "answer": "học sinh đọc báo, truyện, soi gương hay làm bất cứ việc riêng nào trong giờ học sẽ bị trừ 1 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["váy sai quy định","váy ngắn"],
+      "answer": "học sinh nữ nếu váy ngắn trên đầu gối sẽ bị trừ 1 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "quesiton": ["vắng buổi 1","vắng buổi 2","vắng buổi sáng","vắng buổi chiều"],
+      "answer": "học sinh nếu vắng buổi sáng hoặc chiều không có phép sẽ bị trừ 1.5 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["chặn cầu thang","thiếu trung thc với thầy cô","trốn sinh hoạt ở sân","đem tài liệu giờ kiểm tra","sửu dng tài liệu giờ kiểm tra"],
+      "answer": "học sinh vi phạm sẽ bị trừ 2 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["không vào lớp học","trốn tiết","trốn học","cúp học"],
+      "answer": "bất cứ mọi hành vi trốn tiết, trốn học hay cúp học đều sẽ bị trừ 2 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["sử dụng theiét bị điện tử lần 1","sử dụng thiết bị điện tử lần 2","sử dụng thiết bị điện tử lần 3"],
+      "answer": "học sinh sử dụng thiết bị điện tử như điện thoại, tai nghe, máy nghe nhạc lần 1 sẽ bị trừ 2 điểm hạnh kiểm, lần 2 sẽ bị trừ 4 điểm hạnh kiểm, lần 3 sẽ bị trừ 8 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["không nghiêm túc trong giờ kiểm tra","đùa giỡn trong giờ kiểm tra"],
+      "answer": "học sinh quay cóp, trao đổi bài trong giờ kiểm tra s bị trừ 2 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["sử dụng thiết bị không cho phép","sử dụng thiết bị của nhà trường"],
+      "answer": "học sinh tự ý sử dụng các thiết bị tropg phòng học, tự ý tắt mở máy lạnh sẽ bị trừ 2 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["chơi giỡn mạnh bạo nguy hiểm","chơi giỡn nguy hiểm"],
+      "answer": "học sinh chơi bắn bi, chơi tạt nước, đùa giỡn mạnh bạo sẽ bị trừ 2 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["có thái độ  thiếu chuẩn mực với bạn bè","giấu đồ của bạn","đồng phạm hành vi xấu của bạn","mang hột quẹt","mang VHP không cho phép"],
+      "answer": "học sinh sẽ bị tr 3 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["phát ngôn thiếu chuẩn mực","phát ngôn sai lệch"],
+      "answer": "học sinh nói tục, chửi thề sẽ bị trừ 3 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["không thực hiện theo yêu cầu của thầy cô","không nghe hiệu lệnh của giáo viên"],
+      "answer": "học sinh không nghe lời thầy cô sẽ bị trừ 3 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["làm hư hỏng tài sản của người khác","phá hoại tài sản của người khác"],
+      "answer": "học sinh sẽ bị trừ 4 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["xăm mình","có thái độ thiếu chuẩn mực với thầy cô","tự ý ra cổng trường"],
+      "answer": "học sih sẽ bị trừ 5 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["vị phạm kiểm tra tập trung","vi phạm trong các kỳ thi"],
+      "answer": "học sinh bị trừ 5 điểm hạnh kiểm, chưa bị lập biên bản, BGH quyết định",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["bao che cho bạn","bao che hành vi sai trái của bạn"],
+      "answer": "học sinh sẽ bị trừ 6 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["có mùi rượu bia","mang vật nguy hiểm vào trường"],
+      "answer": "học sinh sẽ bị trừ 7 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["ép buộc bạn thực hiện hành vi xấu","không tôn trọng thầy cô","mang và đánh bài trong trường","đổ lỗi cho bạn","giỡn vô văn hoá","lấy cắp","phi tang tang vật","xúi bạn đánh nhau"],
+      "answer": "học sính sẽ bị trừ 10 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["gây gổ, xích mích với bạn","gây gổ với bạn"],
+      "answer": "học sinh nếu cãi nhau, hăm doạ hoặc gây mất đoàn kết sẽ bị từ 10 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["bị lập biên bản kiểm tra tập trung","lập biên bản kiểm tra tập trung"],
+      "answer": "học sinh sẽ bị trừ 12 điểm hạnh kiểm, BGH quyết định",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["mang, sử dụng đồ uống có cồn trong trường","đem đồ uống có cồn vào trường"],
+      "answer": "học sinh mang hoặc sử dụng đồ uống có cồn trong trường sẽ bị trừ 12 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["mang, hút thuốc","sử dụng thuốc lá"],
+      "answer": "học sinh sử dụng thuốc lá truyền thống, thuốc lá điện tử sẽ bị trừ 12 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["mang, sửu dụng chất gây nghiện","sử dụng chất gây nghiện"],
+      "answer": "học sinh mang tinh dầu thuốc lá điện tử hay cac chất gây nghiện khác sẽ bị trừ 12 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["đánh bạn","phá hoại tài sản nhà trường","kêu người ngoài đánh bạn","mang chất gây nổ","mang hung khí","vô lễ","xúc phạm nhân viên nhà trường","vi phạm luật giao thông"],
+      "answer": "học sinh sẽ bị trừ 14 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
     }
   ]
 }
