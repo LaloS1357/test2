@@ -13,8 +13,19 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 try:
     with open(os.path.join(os.path.dirname(__file__), 'admissions_data.json'), 'r', encoding='utf-8') as f:
         admissions_data = json.load(f)
+        # Validate JSON structure
+        if not isinstance(admissions_data, dict) or 'questions' not in admissions_data:
+            raise ValueError("admissions_data.json must be a dictionary with a 'questions' key")
+        if not isinstance(admissions_data['questions'], list):
+            raise ValueError("'questions' in admissions_data.json must be a list")
 except FileNotFoundError:
     st.error("Không tìm thấy file admissions_data.json. Vui lòng kiểm tra lại.")
+    admissions_data = {"questions": []}
+except ValueError as e:
+    st.error(f"Lỗi trong admissions_data.json: {e}")
+    admissions_data = {"questions": []}
+except Exception as e:
+    st.error(f"Lỗi khi tải admissions_data.json: {e}")
     admissions_data = {"questions": []}
 
 # Tải mô hình Transformer
@@ -23,8 +34,6 @@ try:
     def load_model():
         model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-mpnet-base-v2', device=device)
         return model
-
-
     model = load_model()
 except Exception as e:
     st.error(f"Lỗi khi tải mô hình Transformer: {e}")
@@ -35,18 +44,27 @@ if model and 'question_embeddings' not in st.session_state:
     st.session_state.question_texts = []
     st.session_state.question_data_map = {}
     for item in admissions_data['questions']:
+        if not isinstance(item, dict) or 'question' not in item:
+            print(f"Warning: Skipping invalid item in admissions_data['questions']: {item}")
+            continue
         questions = item['question'] if isinstance(item['question'], list) else [item['question']]
         for q in questions:
+            if not isinstance(q, str) or not q.strip():
+                print(f"Warning: Skipping invalid question: {q}")
+                continue
             st.session_state.question_texts.append(q)
             st.session_state.question_data_map[q] = item
 
-    st.session_state.question_embeddings = model.encode(st.session_state.question_texts, convert_to_tensor=True)
-
+    if st.session_state.question_texts:
+        st.session_state.question_embeddings = model.encode(st.session_state.question_texts, convert_to_tensor=True)
+    else:
+        st.session_state.question_embeddings = None
+        print("Warning: No valid questions found in admissions_data['questions'].")
 
 # Hàm tìm câu trả lời, hình ảnh và video
 def find_answer_and_media(question):
-    if not model:
-        return "Chatbot đang gặp sự cố với mô hình ngôn ngữ. Vui lòng thử lại sau.", "text", None
+    if not model or st.session_state.question_embeddings is None:
+        return "Chatbot không thể xử lý vì không có dữ liệu câu hỏi hoặc mô hình ngôn ngữ gặp sự cố.", "text", None
 
     if not isinstance(question, str):
         question = str(question)
@@ -56,7 +74,6 @@ def find_answer_and_media(question):
     query_embedding = model.encode(question, convert_to_tensor=True)
 
     # Tính độ tương đồng cosine giữa câu hỏi người dùng và tất cả các câu hỏi đã có
-    # Sử dụng util.pytorch_cos_sim cho tốc độ cao hơn
     cosine_scores = util.pytorch_cos_sim(query_embedding, st.session_state.question_embeddings)[0]
 
     best_score = torch.max(cosine_scores).item()
@@ -92,8 +109,7 @@ def find_answer_and_media(question):
 
     return "Tôi không có thông tin chính xác về câu hỏi này. Vui lòng thử lại hoặc liên hệ văn phòng tuyển sinh.", "text", None
 
-
-# Giao diện Streamlit (phần này giữ nguyên)
+# Giao diện Streamlit
 def main():
     st.title("Chatbot Tư vấn Tuyển sinh")
     st.markdown("Hỏi về thông tin tuyển sinh và xem hình ảnh hoặc video liên quan!")
@@ -130,11 +146,9 @@ def main():
             if media_type == "multimedia":
                 images, captions, video_url = media_content
                 st.markdown(response)
-
                 if images:
                     valid_images_paths = [img_path for img_path in images if
-                                          isinstance(img_path, str) and os.path.exists(
-                                              img_path) and img_path.strip() != ""]
+                                          isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
                     if valid_images_paths:
                         num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
@@ -142,7 +156,6 @@ def main():
                             with cols[i % num_cols]:
                                 st.image(img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
                                          use_container_width=True)
-
                 st.video(video_url)
                 st.session_state.messages.append(
                     {"role": "assistant", "text": response, "images": images, "captions": captions, "video": video_url})
@@ -155,8 +168,7 @@ def main():
                 images, captions = media_content
                 if images:
                     valid_images_paths = [img_path for img_path in images if
-                                          isinstance(img_path, str) and os.path.exists(
-                                              img_path) and img_path.strip() != ""]
+                                          isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
                     if valid_images_paths:
                         num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
@@ -195,7 +207,6 @@ def main():
     with col2:
         if st.button("Xóa lịch sử trò chuyện", key="clear_history_button"):
             st.session_state.messages = []
-
 
 if __name__ == "__main__":
     main()

@@ -738,7 +738,7 @@
       "captions": null
     },
     {
-      "quesiton": ["vắng buổi 1","vắng buổi 2","vắng buổi sáng","vắng buổi chiều"],
+      "question": ["vắng buổi 1","vắng buổi 2","vắng buổi sáng","vắng buổi chiều"],
       "answer": "học sinh nếu vắng buổi sáng hoặc chiều không có phép sẽ bị trừ 1.5 điểm hạnh kiểm",
       "images": null,
       "captions": null
