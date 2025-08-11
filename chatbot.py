@@ -1,3 +1,5 @@
+# Copyright (c) [2025] [LaloS1357]. Bảo lưu mọi quyền.
+# Nguồn: https://tlmchattest.streamlit.app/
 import json
 import streamlit as st
 import os
