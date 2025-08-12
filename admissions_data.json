@@ -51,14 +51,12 @@
     },
     {
       "question": [
-        "căn tin có máy lạnh không",
         "căn tin như thế nào",
         "đồ ăn có mắc không",
         "nước có mắc không",
         "cho tôi biết về căn tin trường",
         "thông tin về căn tin trường",
-        "điều hòa",
-        "máy lạnh"
+        "căn tin"
       ],
       "answer": "Căn tin có máy lạnh, giá cả đồ ăn phù với túi tiền học sinh",
       "images": null,
@@ -71,6 +69,7 @@
         "gửi xe bao nhiêu",
         "cho tôi biết về việc gửi xe ở trường",
         "gửi xe ở trường",
+        "giữ xe ở trường",
         "gửi xe",
         "giữ xe"
       ],
@@ -85,7 +84,10 @@
         "cho tôi biết về ban lãnh đạo nhà trường",
         "ban lãnh đạo gồm những ai",
         "ban lãnh đạo có những ai",
-        "ban lãnh đạo nhà trường là ai"
+        "ban lãnh đạo nhà trường là ai",
+        "ban giám hiệu",
+        "cho tôi biết về ban giám hiệu nhà trường",
+        "ban giám hiệu nhà trường"
       ],
       "answer": "Trong quá trình hình thành và phát triển của trường THPT Ten Lơ Man, Ban lãnh đạo luôn giữ vai trò quan trọng trong việc dẫn dắt, định hướng và duy trì những giá trị cốt lõi của nhà trường. Với tâm huyết, trách nhiệm và tài năng lãnh đạo, quý thầy cô trong Ban lãnh đạo nhà trường qua các thời kỳ đã và đang cống hiến mình cho những bước tiến vững chắc trong sự nghiệp trồng người. Ban lãnh đạo đương nhiệm của nhà trường là những thầy cô tâm huyết, trách nhiệm, đoàn kết, sáng tạo và tài năng sẽ giúp cho trường THPT Ten Lơ Man không ngừng vươn lên",
       "images": [
@@ -858,7 +860,7 @@
       "captions": null
     },
     {
-      "question": ["sử dụng theiét bị điện tử lần 1","sử dụng thiết bị điện tử lần 2","sử dụng thiết bị điện tử lần 3"],
+      "question": ["sử dụng thiết bị điện tử lần 1","sử dụng thiết bị điện tử lần 2","sử dụng thiết bị điện tử lần 3"],
       "answer": "học sinh sử dụng thiết bị điện tử như điện thoại, tai nghe, máy nghe nhạc lần 1 sẽ bị trừ 2 điểm hạnh kiểm, lần 2 sẽ bị trừ 4 điểm hạnh kiểm, lần 3 sẽ bị trừ 8 điểm hạnh kiểm",
       "images": null,
       "captions": null
@@ -969,6 +971,18 @@
       "question": ["đánh bạn","phá hoại tài sản nhà trường","kêu người ngoài đánh bạn","mang chất gây nổ","mang hung khí","vô lễ","xúc phạm nhân viên nhà trường","vi phạm luật giao thông"],
       "answer": "học sinh sẽ bị trừ 14 điểm hạnh kiểm",
       "images": null,
+      "captions": null
+    },
+    {
+      "question": ["máy lạnh","điều hoà","trường có máy lạnh không","lớp học có máy lạnh không","căn tin có máy lạnh không"],
+      "answer": "100% lớp học, thư viện đều được trang bị 2 máy lạnh và căn tin cũng có máy lạnh",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["văn phòng đoàn","đoàn viên","cho tôi biết về văn phòng đoàn"],
+      "answer": "Đoàn trường THPT Ten Lơ Man trực thuộc Quận đoàn 1, tọa lạc tại số 8 Trần Hưng Đạo, Phường Phạm Ngũ Lão, Quận 1. Với bề dày truyền thống hơn 74 năm gắn liền sự kiện “Ngày Toàn quốc Chống Mỹ” 19/3/1950, Đoàn trường THPT Ten Lơ Man luôn chú trọng việc nâng cao chất lượng hoạt động Đoàn thông qua việc đổi mới hình thức, phát huy vai trò, năng lực, phẩm chất của đoàn viên, học sinh. Đặc biệt, công tác Đoàn và phong trào thanh niên trong nhà trường luôn là điểm sáng và là nơi để đoàn viên, thanh niên nhà trường không ngừng rèn luyện, trau dồi và phát huy tinh thần của tuổi trẻ năng động, bản lĩnh và xung kích.\n\tNhiều năm liền Đoàn trường THPT Ten Lơ Man là đơn vị xuất sắc, dẫn đầu trong các hoạt động thi đua của Cụm và Quận 1. Với sự quan tâm sâu sát từ phía Ban lãnh đạo nhà trường, Ban thường vụ Quận đoàn 1, sự hỗ trợ và đồng hành của cha mẹ học sinh là cơ sở quyết định cho Đoàn trường có thể phát triển toàn diện, chất lượng cho đội ngũ cán bộ đoàn, thanh niên của nhà trường.\nĐoàn trường với tỉ lệ đoàn viên hàng năm từ 50 - 65% luôn đảm bảo về số lượng và chất lượng đoàn viên trong nhà trường. Với gần 40 chi đoàn trực thuộc, đây là những vệ tinh quan trọng trong việc triển khai các nội dung, hoạt động trọng điểm trong các năm học. Trên cơ sở đó, nhiều năm qua Đoàn trường THPT Ten Lơ Man đạt nhiều kết quả khả quan, tiêu biểu trong cụm thi đua, Quận 1 và toàn Thành phố.\n-Tập thể Đoàn TNCS Hồ Chí Minh Trường THPT Ten Lơ Man vinh dự nhận Bằng khen TW Đoàn trong năm học 2018 – 2019 và năm học 2023 – 2024.\n-Đồng chí Đỗ Toàn nguyên Bí thư và đồng chí Nguyễn Phạm Mỹ Ngân nguyên Phó Bí thư Đoàn Trường THPT Ten Lơ Man vinh dự nhận Bằng khen TW Đoàn do có thành tích xuất sắc trong Công tác Đoàn và phong trào thanh niên.\n-Trong năm học 2023 – 2024, Đoàn trường đã ghi dấu một cột mốc đáng tự hào khi lần đầu tiên bồi dưỡng và giới thiệu đồng chí Trần Ngọc Thủy Tiên – Ủy viên Ban Chấp hành Đoàn trường, Bí thư Chi đoàn 12A3 – vinh dự được kết nạp vào Đảng Cộng sản Việt Nam. \nBên cạnh đó, Đoàn trường THPT Ten Lơ Man tự hào được ghi nhận bằng loạt Bằng khen từ Thành đoàn Thành phố Hồ Chí Minh, Giấy khen của Chủ tịch UBND Quận 1 và Giấy khen Quận đoàn 1. Đây là minh chứng rõ nét cho những nỗ lực không ngừng và những kết quả tiêu biểu mà Đoàn trường đã đạt được trong năm học vừa qua. \nHiện nay, các hoạt động Đoàn Thanh niên tại Trường THPT Ten Lơ Man đã và đang trở thành một phần không thể thiếu trong các hoạt động của nhà trường, mang lại những giá trị tinh thần và thực tiễn to lớn cho học sinh. Đây không chỉ là sân chơi lành mạnh giúp các em rèn luyện kỹ năng, phát huy tài năng mà còn là nơi xây dựng tinh thần đoàn kết, trách nhiệm và tình yêu quê hương, đất nước, đẩy mạnh giao lưu quốc tế.\n",
+      "images": "images/vpd.jpg",
       "captions": null
     }
   ]
