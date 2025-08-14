@@ -113,7 +113,7 @@ def find_answer_and_media(question):
         elif has_images:
             images = best_match.get('images', [])
             captions = best_match.get('captions', [])
-            valid_images = [img for img in images if isinstance(img, str) and os.path.exists(img) and img.strip() != ""]
+            valid_images = [img_path for img_path in images if isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
             if valid_images and captions is not None:
                 valid_captions = captions[:len(valid_images)] if len(captions) >= len(valid_images) else captions + [
                     f"Ảnh {i + 1}" for i in range(len(valid_images) - len(captions))]
@@ -141,7 +141,7 @@ def main():
                 st.video(message["video"])
             if "images" in message:
                 valid_images_paths = [img_path for img_path in message["images"] if
-                                      isinstance(img_path, str) and os.path.exists(img_path) and img.strip() != ""]
+                                      isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
                 if valid_images_paths:
                     num_cols = min(len(valid_images_paths), 3)
                     cols = st.columns(num_cols)
@@ -169,8 +169,7 @@ def main():
                 st.markdown(response)
                 if images:
                     valid_images_paths = [img_path for img_path in images if
-                                          isinstance(img_path, str) and os.path.exists(
-                                              img_path) and img_path.strip() != ""]
+                                          isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
                     if valid_images_paths:
                         num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
@@ -195,8 +194,7 @@ def main():
                 images, captions = media_content
                 if images:
                     valid_images_paths = [img_path for img_path in images if
-                                          isinstance(img_path, str) and os.path.exists(
-                                              img_path) and img_path.strip() != ""]
+                                          isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
                     if valid_images_paths:
                         num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
