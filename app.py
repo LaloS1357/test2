@@ -6,7 +6,9 @@ import os
 import torch
 import re
 from PIL import Image
-from sentence_transformers import SentenceTransformer, util
+from transformers import AutoModel, AutoTokenizer
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
 
 # Xác định thiết bị
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -34,15 +36,35 @@ except Exception as e:
 try:
     @st.cache_resource
     def load_model():
-        model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-mpnet-base-v2', device=device)
-        return model
-    model = load_model()
+        # Sử dụng mô hình PhoBERT
+        tokenizer = AutoTokenizer.from_pretrained("vinai/phobert-base-v2")
+        model = AutoModel.from_pretrained("vinai/phobert-base-v2").to(device)
+        return tokenizer, model
+
+    tokenizer, model = load_model()
 except Exception as e:
-    st.error(f"Lỗi khi tải mô hình Transformer: {e}")
-    model = None
+    st.error(f"Lỗi khi tải mô hình PhoBERT: {e}")
+    tokenizer, model = None, None
+
+# Chức năng tạo embedding thủ công vì PhoBERT không phải là SentenceTransformer
+def get_embedding(text, tokenizer, model):
+    if not tokenizer or not model:
+        return None
+
+    # Tokenize và chuyển đổi thành ID
+    inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=512)
+    inputs = {key: value.to(device) for key, value in inputs.items()}
+
+    # Lấy output từ mô hình
+    with torch.no_grad():
+        outputs = model(**inputs)
+
+    # Sử dụng embedding của token [CLS] làm embedding cho toàn bộ câu
+    embeddings = outputs.last_hidden_state[:, 0, :].squeeze().detach().cpu().numpy()
+    return embeddings
 
 # Tạo embedding cho tất cả các câu hỏi trong dữ liệu để tăng tốc độ
-if model and 'question_embeddings' not in st.session_state:
+if tokenizer and model and 'question_embeddings' not in st.session_state:
     st.session_state.question_texts = []
     st.session_state.question_data_map = {}
     for item in admissions_data['questions']:
@@ -58,7 +80,8 @@ if model and 'question_embeddings' not in st.session_state:
             st.session_state.question_data_map[q] = item
 
     if st.session_state.question_texts:
-        st.session_state.question_embeddings = model.encode(st.session_state.question_texts, convert_to_tensor=True)
+        st.session_state.question_embeddings = np.array(
+            [get_embedding(q, tokenizer, model) for q in st.session_state.question_texts])
     else:
         st.session_state.question_embeddings = None
         print("Warning: No valid questions found in admissions_data['questions'].")
@@ -71,26 +94,23 @@ def find_answer_and_media(question):
     if not isinstance(question, str):
         question = str(question)
     question = re.sub(r'\s+', ' ', question.strip().lower())
-
-    # Kiểm tra từ khóa hợp lệ
-    valid_keywords = [q.lower() for q in st.session_state.question_texts]
-    if not any(keyword in question for keyword in valid_keywords):
-        return "Xin lỗi, không tìm thấy thông tin phù hợp. Vui lòng kiểm tra lại từ khóa!", "text", None
+    # Chuẩn hóa query: loại bỏ các cụm từ như "về", "tôi muốn biết về", "giới thiệu về", v.v.
+    question = re.sub(r'(tôi muốn biết|tìm hiểu|giới thiệu|thông tin|hỏi|biết)\s*(về)?\s*', '', question).strip()
 
     # Tạo embedding cho câu hỏi của người dùng
-    query_embedding = model.encode(question, convert_to_tensor=True)
+    query_embedding = get_embedding(question, tokenizer, model)
 
     # Tính độ tương đồng cosine giữa câu hỏi người dùng và tất cả các câu hỏi đã có
-    cosine_scores = util.pytorch_cos_sim(query_embedding, st.session_state.question_embeddings)[0]
+    cosine_scores = cosine_similarity([query_embedding], st.session_state.question_embeddings)[0]
 
-    best_score = torch.max(cosine_scores).item()
-    best_index = torch.argmax(cosine_scores).item()
+    best_score = np.max(cosine_scores)
+    best_index = np.argmax(cosine_scores)
 
     best_match_text = st.session_state.question_texts[best_index]
     best_match = st.session_state.question_data_map[best_match_text]
 
     # Ngưỡng độ tương đồng được điều chỉnh cho cosine similarity
-    if best_score >= 0.7:  # Tăng ngưỡng để giảm nhầm lẫn
+    if best_score >= 0.8:  # Tăng ngưỡng để giảm nhầm lẫn
         if "images" in best_match and isinstance(best_match["images"], str):
             best_match["images"] = [best_match["images"]]
 
@@ -163,13 +183,15 @@ def main():
                 st.markdown(response)
                 if images:
                     valid_images_paths = [img_path for img_path in images if
-                                          isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
+                                          isinstance(img_path, str) and os.path.exists(
+                                              img_path) and img_path.strip() != ""]
                     if valid_images_paths:
                         num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
                         # Đảm bảo caption đầy đủ cho từng ảnh
                         if not isinstance(captions, list):
-                            captions = [captions] if captions else [f"Ảnh {i + 1}" for i in range(len(valid_images_paths))]
+                            captions = [captions] if captions else [f"Ảnh {i + 1}" for i in
+                                                                    range(len(valid_images_paths))]
                         captions = captions[:len(valid_images_paths)]  # Cắt hoặc bổ sung để khớp số lượng ảnh
                         for i, img_path in enumerate(valid_images_paths):
                             with cols[i % num_cols]:
@@ -187,13 +209,15 @@ def main():
                 images, captions = media_content
                 if images:
                     valid_images_paths = [img_path for img_path in images if
-                                          isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
+                                          isinstance(img_path, str) and os.path.exists(
+                                              img_path) and img_path.strip() != ""]
                     if valid_images_paths:
                         num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
                         # Đảm bảo caption đầy đủ cho từng ảnh, kể cả khi chỉ có 1 ảnh
                         if not isinstance(captions, list):
-                            captions = [captions] if captions else [f"Ảnh {i + 1}" for i in range(len(valid_images_paths))]
+                            captions = [captions] if captions else [f"Ảnh {i + 1}" for i in
+                                                                    range(len(valid_images_paths))]
                         captions = captions[:len(valid_images_paths)]  # Đảm bảo số lượng caption khớp với số ảnh
                         for i, img_path in enumerate(valid_images_paths):
                             with cols[i % num_cols]:

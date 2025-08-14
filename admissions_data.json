@@ -735,7 +735,7 @@
     },
     {
       "question": ["đi trễ sáng","đi trễ chiều","đi trễ buổi 1","đi trễ buổi 2"],
-      "answer": "học sinh đi trễ 2 lần đầu sẽ không bị trừ điểm hạnh kiểm avf từ lần thứ 3 sẽ bị trừ 0.25 điểm hạnh kiểm(bao gồm trễ có phép)",
+      "answer": "học sinh đi trễ 2 lần đầu sẽ không bị trừ điểm hạnh kiểm và từ lần thứ 3 sẽ bị trừ 0.25 điểm hạnh kiểm(bao gồm trễ có phép)",
       "images": null,
       "captions": null
     },

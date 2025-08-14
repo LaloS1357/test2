@@ -1,4 +1,5 @@
 torch
 streamlit
-sentence_transformers
+transformers
+scikit-learn
 pillow
