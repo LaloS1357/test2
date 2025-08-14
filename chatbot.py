@@ -7,7 +7,8 @@ import torch
 import re
 import numpy as np
 from PIL import Image
-from sentence_transformers import SentenceTransformer
+from transformers import AutoModel, AutoTokenizer
+from pyvi.ViTokenizer import tokenize
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Xác định thiết bị
@@ -32,27 +33,34 @@ except Exception as e:
     st.error(f"Lỗi khi tải admissions_data.json: {e}")
     admissions_data = {"questions": []}
 
-# Tải mô hình SentenceTransformer
+# Tải mô hình và tokenizer
 try:
     @st.cache_resource
-    def load_model():
-        # Sử dụng mô hình sup-SimCSE-VietNamese-phobert-base
-        model = SentenceTransformer('VoVanPhuc/sup-SimCSE-VietNamese-phobert-base').to(device)
-        return model
+    def load_model_and_tokenizer():
+        tokenizer = AutoTokenizer.from_pretrained("VoVanPhuc/sup-SimCSE-VietNamese-phobert-base")
+        model = AutoModel.from_pretrained("VoVanPhuc/sup-SimCSE-VietNamese-phobert-base").to(device)
+        return tokenizer, model
 
-    model = load_model()
+    tokenizer, model = load_model_and_tokenizer()
 except Exception as e:
-    st.error(f"Lỗi khi tải mô hình SentenceTransformer: {e}")
-    model = None
+    st.error(f"Lỗi khi tải mô hình hoặc tokenizer: {e}")
+    tokenizer, model = None, None
 
 # Chức năng tạo embedding
 def get_embedding(text, tokenizer, model):
-    if not model:
+    if not model or not tokenizer:
         return None
-    return model.encode(text, convert_to_numpy=True)
+    # Phân đoạn từ tiếng Việt
+    text = tokenize(text)
+    # Tokenize và chuyển thành tensor
+    inputs = tokenizer(text, padding=True, truncation=True, return_tensors="pt").to(device)
+    with torch.no_grad():
+        # Lấy pooler_output (CLS token, phù hợp với SimCSE)
+        embedding = model(**inputs, output_hidden_states=True, return_dict=True).pooler_output
+    return embedding.cpu().numpy().squeeze()
 
 # Tạo embedding cho tất cả các câu hỏi trong dữ liệu để tăng tốc độ
-if model and 'question_embeddings' not in st.session_state:
+if model and tokenizer and 'question_embeddings' not in st.session_state:
     st.session_state.question_texts = []
     st.session_state.question_data_map = {}
     for item in admissions_data['questions']:
@@ -69,14 +77,14 @@ if model and 'question_embeddings' not in st.session_state:
 
     if st.session_state.question_texts:
         st.session_state.question_embeddings = np.array(
-            [get_embedding(q, None, model) for q in st.session_state.question_texts])
+            [get_embedding(q, tokenizer, model) for q in st.session_state.question_texts])
     else:
         st.session_state.question_embeddings = None
         print("Warning: No valid questions found in admissions_data['questions'].")
 
 # Hàm tìm câu trả lời, hình ảnh và video
 def find_answer_and_media(question):
-    if not model or st.session_state.question_embeddings is None:
+    if not model or not tokenizer or st.session_state.question_embeddings is None:
         return "Chatbot không thể xử lý vì không có dữ liệu câu hỏi hoặc mô hình ngôn ngữ gặp sự cố.", "text", None
 
     if not isinstance(question, str):
@@ -84,7 +92,7 @@ def find_answer_and_media(question):
     question = re.sub(r'\s+', ' ', question.strip().lower())
 
     # Tạo embedding cho câu hỏi của người dùng
-    query_embedding = get_embedding(question, None, model)
+    query_embedding = get_embedding(question, tokenizer, model)
 
     # Tính độ tương đồng cosine giữa câu hỏi người dùng và tất cả các câu hỏi đã có
     cosine_scores = cosine_similarity([query_embedding], st.session_state.question_embeddings)[0]
@@ -145,11 +153,10 @@ def main():
                 if valid_images_paths:
                     num_cols = min(len(valid_images_paths), 3)
                     cols = st.columns(num_cols)
-                    # Đảm bảo caption đầy đủ cho từng ảnh, kể cả khi chỉ có 1 ảnh
                     captions = message.get("captions", [])
                     if not isinstance(captions, list):
                         captions = [captions] if captions else [f"Ảnh {i + 1}" for i in range(len(valid_images_paths))]
-                    captions = captions[:len(valid_images_paths)]  # Đảm bảo số lượng caption khớp với số ảnh
+                    captions = captions[:len(valid_images_paths)]
                     for i, img_path in enumerate(valid_images_paths):
                         with cols[i % num_cols]:
                             st.image(img_path,
@@ -173,11 +180,10 @@ def main():
                     if valid_images_paths:
                         num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
-                        # Đảm bảo caption đầy đủ cho từng ảnh
                         if not isinstance(captions, list):
                             captions = [captions] if captions else [f"Ảnh {i + 1}" for i in
                                                                     range(len(valid_images_paths))]
-                        captions = captions[:len(valid_images_paths)]  # Cắt hoặc bổ sung để khớp số lượng ảnh
+                        captions = captions[:len(valid_images_paths)]
                         for i, img_path in enumerate(valid_images_paths):
                             with cols[i % num_cols]:
                                 st.image(img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
@@ -198,11 +204,10 @@ def main():
                     if valid_images_paths:
                         num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
-                        # Đảm bảo caption đầy đủ cho từng ảnh, kể cả khi chỉ có 1 ảnh
                         if not isinstance(captions, list):
                             captions = [captions] if captions else [f"Ảnh {i + 1}" for i in
                                                                     range(len(valid_images_paths))]
-                        captions = captions[:len(valid_images_paths)]  # Đảm bảo số lượng caption khớp với số ảnh
+                        captions = captions[:len(valid_images_paths)]
                         for i, img_path in enumerate(valid_images_paths):
                             with cols[i % num_cols]:
                                 st.image(img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
