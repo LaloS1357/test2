@@ -3,14 +3,14 @@
 import json
 import streamlit as st
 import os
-import torch
 import re
-import numpy as np
 from PIL import Image
-from transformers import AutoModel, AutoTokenizer
-from pyvi.ViTokenizer import tokenize
+from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+import torch
 
+# --- Cấu hình và tải dữ liệu ---
 # Xác định thiết bị
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -33,34 +33,21 @@ except Exception as e:
     st.error(f"Lỗi khi tải admissions_data.json: {e}")
     admissions_data = {"questions": []}
 
-# Tải mô hình và tokenizer
+# --- Tải mô hình SentenceTransformer ---
 try:
     @st.cache_resource
-    def load_model_and_tokenizer():
-        tokenizer = AutoTokenizer.from_pretrained("VoVanPhuc/sup-SimCSE-VietNamese-phobert-base")
-        model = AutoModel.from_pretrained("VoVanPhuc/sup-SimCSE-VietNamese-phobert-base").to(device)
-        return tokenizer, model
+    def load_sentence_transformer_model():
+        # Sử dụng mô hình dangvantuan/vietnamese-embedding
+        model = SentenceTransformer('dangvantuan/vietnamese-embedding', device=device)
+        return model
 
-    tokenizer, model = load_model_and_tokenizer()
+    model = load_sentence_transformer_model()
 except Exception as e:
-    st.error(f"Lỗi khi tải mô hình hoặc tokenizer: {e}")
-    tokenizer, model = None, None
+    st.error(f"Lỗi khi tải mô hình SentenceTransformer: {e}")
+    model = None
 
-# Chức năng tạo embedding
-def get_embedding(text, tokenizer, model):
-    if not model or not tokenizer:
-        return None
-    # Phân đoạn từ tiếng Việt
-    text = tokenize(text)
-    # Tokenize và chuyển thành tensor
-    inputs = tokenizer(text, padding=True, truncation=True, return_tensors="pt").to(device)
-    with torch.no_grad():
-        # Lấy pooler_output (CLS token, phù hợp với SimCSE)
-        embedding = model(**inputs, output_hidden_states=True, return_dict=True).pooler_output
-    return embedding.cpu().numpy().squeeze()
-
-# Tạo embedding cho tất cả các câu hỏi trong dữ liệu để tăng tốc độ
-if model and tokenizer and 'question_embeddings' not in st.session_state:
+# Tạo embedding cho tất cả các câu hỏi trong dữ liệu
+if model and 'question_embeddings' not in st.session_state:
     st.session_state.question_texts = []
     st.session_state.question_data_map = {}
     for item in admissions_data['questions']:
@@ -76,26 +63,28 @@ if model and tokenizer and 'question_embeddings' not in st.session_state:
             st.session_state.question_data_map[q] = item
 
     if st.session_state.question_texts:
-        st.session_state.question_embeddings = np.array(
-            [get_embedding(q, tokenizer, model) for q in st.session_state.question_texts])
+        # Sử dụng phương thức encode() của SentenceTransformer để tạo embedding
+        st.session_state.question_embeddings = model.encode(st.session_state.question_texts)
     else:
         st.session_state.question_embeddings = None
         print("Warning: No valid questions found in admissions_data['questions'].")
 
-# Hàm tìm câu trả lời, hình ảnh và video
+# --- Hàm tìm câu trả lời, hình ảnh và video ---
 def find_answer_and_media(question):
-    if not model or not tokenizer or st.session_state.question_embeddings is None:
+    if not model or st.session_state.question_embeddings is None:
         return "Chatbot không thể xử lý vì không có dữ liệu câu hỏi hoặc mô hình ngôn ngữ gặp sự cố.", "text", None
 
     if not isinstance(question, str):
         question = str(question)
     question = re.sub(r'\s+', ' ', question.strip().lower())
+    # Chuẩn hóa query: loại bỏ các cụm từ như "về", "tôi muốn biết về", "giới thiệu về", v.v.
+    question = re.sub(r'(tôi muốn biết|tìm hiểu|giới thiệu|thông tin|hỏi|biết)\s*(về)?\s*', '', question).strip()
 
-    # Tạo embedding cho câu hỏi của người dùng
-    query_embedding = get_embedding(question, tokenizer, model)
+    # Tạo embedding cho câu hỏi của người dùng bằng phương thức encode()
+    query_embedding = model.encode([question])
 
     # Tính độ tương đồng cosine giữa câu hỏi người dùng và tất cả các câu hỏi đã có
-    cosine_scores = cosine_similarity([query_embedding], st.session_state.question_embeddings)[0]
+    cosine_scores = cosine_similarity(query_embedding, st.session_state.question_embeddings)[0]
 
     best_score = np.max(cosine_scores)
     best_index = np.argmax(cosine_scores)
@@ -104,7 +93,7 @@ def find_answer_and_media(question):
     best_match = st.session_state.question_data_map[best_match_text]
 
     # Ngưỡng độ tương đồng được điều chỉnh cho cosine similarity
-    if best_score >= 0.8:  # Tăng ngưỡng để giảm nhầm lẫn
+    if best_score >= 0.7:  # Tăng ngưỡng để giảm nhầm lẫn
         if "images" in best_match and isinstance(best_match["images"], str):
             best_match["images"] = [best_match["images"]]
 
@@ -121,7 +110,7 @@ def find_answer_and_media(question):
         elif has_images:
             images = best_match.get('images', [])
             captions = best_match.get('captions', [])
-            valid_images = [img_path for img_path in images if isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
+            valid_images = [img for img in images if isinstance(img, str) and os.path.exists(img) and img.strip() != ""]
             if valid_images and captions is not None:
                 valid_captions = captions[:len(valid_images)] if len(captions) >= len(valid_images) else captions + [
                     f"Ảnh {i + 1}" for i in range(len(valid_images) - len(captions))]
@@ -133,7 +122,7 @@ def find_answer_and_media(question):
 
     return "Xin lỗi, không tìm thấy thông tin phù hợp. Vui lòng kiểm tra lại từ khóa!", "text", None
 
-# Giao diện Streamlit
+# --- Giao diện Streamlit ---
 def main():
     st.title("Chatbot Tư vấn Tuyển sinh")
     st.markdown("Hỏi về thông tin tuyển sinh và xem hình ảnh hoặc video liên quan!")
@@ -153,10 +142,11 @@ def main():
                 if valid_images_paths:
                     num_cols = min(len(valid_images_paths), 3)
                     cols = st.columns(num_cols)
+                    # Đảm bảo caption đầy đủ cho từng ảnh, kể cả khi chỉ có 1 ảnh
                     captions = message.get("captions", [])
                     if not isinstance(captions, list):
                         captions = [captions] if captions else [f"Ảnh {i + 1}" for i in range(len(valid_images_paths))]
-                    captions = captions[:len(valid_images_paths)]
+                    captions = captions[:len(valid_images_paths)]  # Đảm bảo số lượng caption khớp với số ảnh
                     for i, img_path in enumerate(valid_images_paths):
                         with cols[i % num_cols]:
                             st.image(img_path,
@@ -176,14 +166,16 @@ def main():
                 st.markdown(response)
                 if images:
                     valid_images_paths = [img_path for img_path in images if
-                                          isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
+                                          isinstance(img_path, str) and os.path.exists(
+                                              img_path) and img_path.strip() != ""]
                     if valid_images_paths:
                         num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
+                        # Đảm bảo caption đầy đủ cho từng ảnh
                         if not isinstance(captions, list):
                             captions = [captions] if captions else [f"Ảnh {i + 1}" for i in
                                                                     range(len(valid_images_paths))]
-                        captions = captions[:len(valid_images_paths)]
+                        captions = captions[:len(valid_images_paths)]  # Cắt hoặc bổ sung để khớp số lượng ảnh
                         for i, img_path in enumerate(valid_images_paths):
                             with cols[i % num_cols]:
                                 st.image(img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
@@ -200,14 +192,16 @@ def main():
                 images, captions = media_content
                 if images:
                     valid_images_paths = [img_path for img_path in images if
-                                          isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
+                                          isinstance(img_path, str) and os.path.exists(
+                                              img_path) and img_path.strip() != ""]
                     if valid_images_paths:
                         num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
+                        # Đảm bảo caption đầy đủ cho từng ảnh, kể cả khi chỉ có 1 ảnh
                         if not isinstance(captions, list):
                             captions = [captions] if captions else [f"Ảnh {i + 1}" for i in
                                                                     range(len(valid_images_paths))]
-                        captions = captions[:len(valid_images_paths)]
+                        captions = captions[:len(valid_images_paths)]  # Đảm bảo số lượng caption khớp với số ảnh
                         for i, img_path in enumerate(valid_images_paths):
                             with cols[i % num_cols]:
                                 st.image(img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
@@ -220,29 +214,29 @@ def main():
 
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("Gợi ý: Giới thiệu về trường", key="suggested_question_button"):
-            suggested_prompt = "Giới thiệu về trường"
-            st.session_state.messages.append({"role": "user", "text": suggested_prompt})
+        if st.button("Giới thiệu về trường", key="suggested_question_button"):
+            # Trả lời hardcode và video cho nút "Giới thiệu về trường"
+            hardcoded_response = "Tôi xin giới thiệu bạn video về trường."
+            hardcoded_video_url = "https://www.youtube.com/watch?v=HzvZVAvBkto"
 
-            response, media_type, media_content = find_answer_and_media(suggested_prompt)
-            if media_type == "multimedia":
-                images, captions, video_url = media_content
-                st.session_state.messages.append(
-                    {"role": "assistant", "text": response, "images": images, "captions": captions, "video": video_url})
-            elif media_type == "video":
-                st.session_state.messages.append({"role": "assistant", "text": response, "video": media_content})
-            elif media_type == "image":
-                images, captions = media_content
-                st.session_state.messages.append(
-                    {"role": "assistant", "text": response, "images": images, "captions": captions})
-            else:
-                st.session_state.messages.append({"role": "assistant", "text": response})
+            st.session_state.messages.append({"role": "user", "text": "Giới thiệu về trường"})
+
+            with st.chat_message("assistant"):
+                st.markdown(hardcoded_response)
+                st.video(hardcoded_video_url)
+
+            st.session_state.messages.append({
+                "role": "assistant",
+                "text": hardcoded_response,
+                "video": hardcoded_video_url
+            })
 
             st.rerun()
 
     with col2:
         if st.button("Xóa lịch sử trò chuyện", key="clear_history_button"):
             st.session_state.messages = []
+            st.rerun()
 
 if __name__ == "__main__":
     main()

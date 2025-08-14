@@ -5,3 +5,4 @@ scikit-learn>=1.2.0
 pillow>=9.0.0
 pyvi>=0.1.1
 numpy>=1.22.0
+sentence-transformers>=2.2.2

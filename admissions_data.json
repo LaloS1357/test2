@@ -308,18 +308,11 @@
       "captions": ["(Thầy Bạch Văn Gân – TTCM Tổ GDTC cùng \nhọc sinh tham dự kì thi bắn súng do Quận 1 tổ chức)\n\n", "(Thầy Bạch Văn Gân – TTCM Tổ GDTC đạt giải Nhì nội dung cá nhân tính điểm súng trường 10m do CLB bắn súng SAIGON SPINNER tổ chức)", "(Thầy cô trường THPT Ten Lơ Man\ntham dự cuộc thi Đua thuyền rồng do Công đoàn giáo dục thành phố tổ chức)\n\n", "(Học sinh Ten Lơ Man đạt giải khuyến khích tại cuộc thi “Học sinh, sinh viên khởi nghiệp” cấp thành phố năm học 2024 – 2025)", "(Em Nguyễn Hùng Quang – 12A1 – đạt giải khuyến khích trong cuộc thi hùng biện tiếng Nhật do Sở GDĐT tổ chức)", "(Học sinh Ten Lơ Man hoá thân thành các nhân vật và tạo điệu nhảy tự do nhân dịp Noel vào giờ ra chơi)", "(Hoạt động xem kịch do tổ Ngữ Văn tổ chức)", "(Các bạn học sinh tô thêm ‘‘xuân’’ trong\nhội thi “Trang Trí Mai Đào Ngày Tết’’)\n", "(Học sinh cùng các thầy cô tham gia \nhoạt động “Gói Bánh Chưng” đầy ý nghĩa Xuân Ất Tỵ 2025)\n", "(Các tiết mục flashmob được trình diễn\ntrong không khí Hội Xuân sôi động)\n", "(Những chiếc ghế đã cũ được \nCLB Sáng Tạo TEAM \"khoác áo mới\")\n", "(Học sinh trường Ten Lơ Man tham gia tham quan tại tư vấn hướng nghiệp tại ĐH Tôn Đức Thắng)", "(Học sinh trường Ten Lơ Man tham quan học tập tại nhà máy ACECOOK)", "(Thầy Nguyễn Hùng Khương - Hiệu trưởng ký kết ghi nhớ hợp tác với các trường đại học)", "(Giao lưu văn hoá với trường THPT Cơ Long, Đài Loan)", "(Học sinh Ten Lơ Man cùng HS Cơ Long sáng tạo hình vẽ trên chiếc nón lá và heo đất)", "(Thầy Nguyễn Hùng Khương - Hiệu trưởng -  tham dự Hội nghị tiếng Hàn tại Incheon Hàn Quốc)", "(Cô Trần Lý Giao Nguyên – TPCM Tổ Ngoại Ngữ cùng học sinh Ten Lơ Man tham dự Hội nghị thượng đỉnh thanh thiếu niên APEC mô phỏng tại Hàn Quốc)", "(Trường THPT Ten Lơ Man giao lưu văn hoá với trường THPT Keelung tại Đài Loan)"]
     },
     {
-      "question": ["video giới thiệu", "xem video", "clip"],
-      "answer": "Đây là video và một số hình ảnh giới thiệu về trường của chúng tôi:",
+      "question": ["video","clip","vid","phim"],
+      "answer": "Đây là video giới thiệu về trường của chúng tôi:",
       "video_url": "https://www.youtube.com/watch?v=HzvZVAvBkto",
       "images": null,
       "captions": null
-    },
-    {
-      "question": ["Giới thiệu về trường"],
-      "answer": "Trường chúng tôi là một trong những cơ sở giáo dục hàng đầu, với lịch sử lâu đời và nhiều thành tựu nổi bật. Chúng tôi cam kết mang đến một môi trường học tập hiện đại và chất lượng cao.",
-      "images": null,
-      "captions": null,
-      "video_url": "https://www.youtube.com/watch?v=HzvZVAvBkto"
     },
     {
       "question":["vắng có phép buổi 1","vắng có phép buổi 2","vắng có phép sáng","vănng có phép chiều"],
