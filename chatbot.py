@@ -93,7 +93,7 @@ def find_answer_and_media(question):
     best_match = st.session_state.question_data_map[best_match_text]
 
     # Ngưỡng độ tương đồng được điều chỉnh cho cosine similarity
-    if best_score >= 0.7:  # Tăng ngưỡng để giảm nhầm lẫn
+    if best_score >= 0.5:  # Tăng ngưỡng để giảm nhầm lẫn
         if "images" in best_match and isinstance(best_match["images"], str):
             best_match["images"] = [best_match["images"]]
 
