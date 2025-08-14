@@ -72,6 +72,11 @@ def find_answer_and_media(question):
         question = str(question)
     question = re.sub(r'\s+', ' ', question.strip().lower())
 
+    # Kiểm tra từ khóa hợp lệ
+    valid_keywords = [q.lower() for q in st.session_state.question_texts]
+    if not any(keyword in question for keyword in valid_keywords):
+        return "Xin lỗi, không tìm thấy thông tin phù hợp. Vui lòng kiểm tra lại từ khóa!", "text", None
+
     # Tạo embedding cho câu hỏi của người dùng
     query_embedding = model.encode(question, convert_to_tensor=True)
 
@@ -85,7 +90,7 @@ def find_answer_and_media(question):
     best_match = st.session_state.question_data_map[best_match_text]
 
     # Ngưỡng độ tương đồng được điều chỉnh cho cosine similarity
-    if best_score >= 0.5:
+    if best_score >= 0.7:  # Tăng ngưỡng để giảm nhầm lẫn
         if "images" in best_match and isinstance(best_match["images"], str):
             best_match["images"] = [best_match["images"]]
 
@@ -103,13 +108,16 @@ def find_answer_and_media(question):
             images = best_match.get('images', [])
             captions = best_match.get('captions', [])
             valid_images = [img for img in images if isinstance(img, str) and os.path.exists(img) and img.strip() != ""]
-            valid_captions = captions[:len(valid_images)] if len(captions) >= len(valid_images) else captions + [
-                f"Ảnh {i + 1}" for i in range(len(valid_images) - len(captions))]
+            if valid_images and captions is not None:
+                valid_captions = captions[:len(valid_images)] if len(captions) >= len(valid_images) else captions + [
+                    f"Ảnh {i + 1}" for i in range(len(valid_images) - len(captions))]
+            else:
+                valid_captions = []  # Gán giá trị mặc định nếu có lỗi
             return best_match.get('answer', "Không có câu trả lời."), "image", (valid_images, valid_captions)
         else:
             return best_match.get('answer', "Không có câu trả lời."), "text", None
 
-    return "Tôi không có thông tin chính xác về câu hỏi này. Vui lòng thử lại hoặc liên hệ văn phòng tuyển sinh.", "text", None
+    return "Xin lỗi, không tìm thấy thông tin phù hợp. Vui lòng kiểm tra lại từ khóa!", "text", None
 
 # Giao diện Streamlit
 def main():
@@ -131,10 +139,15 @@ def main():
                 if valid_images_paths:
                     num_cols = min(len(valid_images_paths), 3)
                     cols = st.columns(num_cols)
+                    # Đảm bảo caption đầy đủ cho từng ảnh, kể cả khi chỉ có 1 ảnh
+                    captions = message.get("captions", [])
+                    if not isinstance(captions, list):
+                        captions = [captions] if captions else [f"Ảnh {i + 1}" for i in range(len(valid_images_paths))]
+                    captions = captions[:len(valid_images_paths)]  # Đảm bảo số lượng caption khớp với số ảnh
                     for i, img_path in enumerate(valid_images_paths):
                         with cols[i % num_cols]:
                             st.image(img_path,
-                                     caption=message["captions"][i] if i < len(message["captions"]) else f"Ảnh {i + 1}",
+                                     caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
                                      use_container_width=True)
 
     if prompt := st.chat_input("Câu hỏi của bạn:"):
@@ -154,6 +167,10 @@ def main():
                     if valid_images_paths:
                         num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
+                        # Đảm bảo caption đầy đủ cho từng ảnh
+                        if not isinstance(captions, list):
+                            captions = [captions] if captions else [f"Ảnh {i + 1}" for i in range(len(valid_images_paths))]
+                        captions = captions[:len(valid_images_paths)]  # Cắt hoặc bổ sung để khớp số lượng ảnh
                         for i, img_path in enumerate(valid_images_paths):
                             with cols[i % num_cols]:
                                 st.image(img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
@@ -174,6 +191,10 @@ def main():
                     if valid_images_paths:
                         num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
+                        # Đảm bảo caption đầy đủ cho từng ảnh, kể cả khi chỉ có 1 ảnh
+                        if not isinstance(captions, list):
+                            captions = [captions] if captions else [f"Ảnh {i + 1}" for i in range(len(valid_images_paths))]
+                        captions = captions[:len(valid_images_paths)]  # Đảm bảo số lượng caption khớp với số ảnh
                         for i, img_path in enumerate(valid_images_paths):
                             with cols[i % num_cols]:
                                 st.image(img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",

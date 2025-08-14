@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="90cbbf4a-2178-4efc-b454-fe669178cb24" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.devcontainer/devcontainer.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -22,6 +23,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "LaloS1357"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/LaloS1357/test2.git",
+    "accountId": "f795c86d-c1ad-45e8-b8e8-4fcc335789a6"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -45,7 +58,11 @@
 <<<<<<< Updated upstream
     "last_opened_file_path": "C:/Users/thai/Documents/kraken/test3"
 =======
+<<<<<<< HEAD
     "last_opened_file_path": "C:/Users/dever/Downloads/F/test2"
+=======
+    "last_opened_file_path": "D:/fork/test2"
+>>>>>>> origin/master
 >>>>>>> Stashed changes
   }
 }]]></component>
@@ -81,7 +98,11 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
+<<<<<<< HEAD
         <option value="bundled-python-sdk-4c141bd692a7-e2d783800521-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-251.26927.90" />
+=======
+        <option value="bundled-python-sdk-dfff61a61320-9cdd278e9d02-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-251.25410.159" />
+>>>>>>> origin/master
       </set>
     </attachedChunks>
   </component>

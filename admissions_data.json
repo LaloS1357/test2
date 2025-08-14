@@ -51,13 +51,12 @@
     },
     {
       "question": [
-        "căn tin có máy lạnh không",
         "căn tin như thế nào",
         "đồ ăn có mắc không",
         "nước có mắc không",
         "cho tôi biết về căn tin trường",
         "thông tin về căn tin trường",
-        "điều hòa"
+        "căn tin"
       ],
       "answer": "Căn tin có máy lạnh, giá cả đồ ăn phù với túi tiền học sinh",
       "images": null,
@@ -70,6 +69,7 @@
         "gửi xe bao nhiêu",
         "cho tôi biết về việc gửi xe ở trường",
         "gửi xe ở trường",
+        "giữ xe ở trường",
         "gửi xe",
         "giữ xe"
       ],
@@ -84,7 +84,10 @@
         "cho tôi biết về ban lãnh đạo nhà trường",
         "ban lãnh đạo gồm những ai",
         "ban lãnh đạo có những ai",
-        "ban lãnh đạo nhà trường là ai"
+        "ban lãnh đạo nhà trường là ai",
+        "ban giám hiệu",
+        "cho tôi biết về ban giám hiệu nhà trường",
+        "ban giám hiệu nhà trường"
       ],
       "answer": "Trong quá trình hình thành và phát triển của trường THPT Ten Lơ Man, Ban lãnh đạo luôn giữ vai trò quan trọng trong việc dẫn dắt, định hướng và duy trì những giá trị cốt lõi của nhà trường. Với tâm huyết, trách nhiệm và tài năng lãnh đạo, quý thầy cô trong Ban lãnh đạo nhà trường qua các thời kỳ đã và đang cống hiến mình cho những bước tiến vững chắc trong sự nghiệp trồng người. Ban lãnh đạo đương nhiệm của nhà trường là những thầy cô tâm huyết, trách nhiệm, đoàn kết, sáng tạo và tài năng sẽ giúp cho trường THPT Ten Lơ Man không ngừng vươn lên",
       "images": [
@@ -560,117 +563,158 @@
         "tổ lý",
         "lý",
         "vật lý",
+        "tổ lý như thế nào",
+        "cho tôi biết về tổ vật lý",
+        "cho tôi dữ liệu về tổ vật lý",
+        "tổ lý gồm những ai",
+        "tổ vật lý",
         "cho tôi biết về tổ lý",
         "cho tôi dữ liệu về tổ lý",
-        "tổ lý như thế nào"
+        "tổ vật lý gồm những thầy cô nào",
+        "tổ lý gồm những thầy cô nào"
       ],
       "answer": "Trong hành trình phát triển của trường THPT Ten Lơ Man, tổ Vật lý luôn là một tập thể đoàn kết, sáng tạo và tận tâm trong sự nghiệp trồng người. Đội ngũ giáo viên tổ Vật lý đã không ngừng đổi mới phương pháp giảng dạy, kết hợp lý thuyết với thực hành, thúc đẩy học sinh tham gia các hoạt động sáng tạo như STEM, thí nghiệm ứng dụng và các tiết học tích hợp công nghệ hiện đại luôn khơi dậy tinh thần đam mê khám phá của học sinh.\n\nHướng tới kỷ niệm 75 năm truyền thống trường, tổ Vật lý tiếp tục quyết tâm cống hiến hết sức cho sự nghiệp giáo dục, đồng hành cùng học sinh khám phá những chân trời tri thức mới, góp phần xây dựng một môi trường giáo dục hạnh phúc.\n\nTHÀNH TÍCH:\n\n- Tổ nhiều năm đạt danh hiệu tổ tiên tiến xuất sắc.\n\n- 02 giáo viên đạt danh hiệu chiến sĩ thi đua cấp thành phố.\n\n- 04 giáo viên đạt danh hiệu chiến sĩ thi đua cấp cơ sở.\n\n- Nhiều học sinh đạt giải trong các cuộc thi học sinh giỏi cấp thành phố, giải toán vật lý trên máy tính cầm tay Casio khối 12 và Olympic tháng 4 cấp thành phố dành cho khối 10 và 11, 2 học sinh lớp 11 đạt giải hội thi Khoa học kỷ thuật cấp Thành phố.",
       "images": "images/thaycoly.jpg",
-      "captions": "Hình ảnh các giáo viên trong tổ hiện nay\nTừ trái sang phải: Thầy Huỳnh Kiều Viết Lãm ( phó CTCĐ và nhóm trưởng K11), Thầy Nguyễn Ngọc Tân, Cô Trần Nguyễn Quỳnh Như (TTCĐ), Cô Huỳnh Thị Thanh Hiền (TPCM), Cô Nguyễn Tuyết Trinh, Cô Lê Thị Thanh Thuỷ (UV), cô Phạm Kim Dung, Thầy Đỗ Đăng Cao (TTCM), Cô Trương Hồng Ngọc, Thầy Phạm Thư Tùng (nhóm trưởng K10)\n"
+      "captions": ["Hình ảnh các giáo viên trong tổ hiện nay\nTừ trái sang phải: Thầy Huỳnh Kiều Viết Lãm ( phó CTCĐ và nhóm trưởng K11), Thầy Nguyễn Ngọc Tân, Cô Trần Nguyễn Quỳnh Như (TTCĐ), Cô Huỳnh Thị Thanh Hiền (TPCM), Cô Nguyễn Tuyết Trinh, Cô Lê Thị Thanh Thuỷ (UV), cô Phạm Kim Dung, Thầy Đỗ Đăng Cao (TTCM), Cô Trương Hồng Ngọc, Thầy Phạm Thư Tùng (nhóm trưởng K10)\n"]
     },
     {
       "question": [
         "hoá học",
         "tổ hoá",
+        "tổ hoá như thế nào",
+        "cho tôi biết về tổ hoá học",
+        "cho tôi dữ liệu về tổ hoá học",
+        "tổ hoá gồm những ai",
+        "tổ hoá học",
         "cho tôi biết về tổ hoá",
         "cho tôi dữ liệu về tổ hoá",
-        "tổ hoá như thế nào"
+        "tổ hoá học gồm những thầy cô nào",
+        "tổ hoá gồm những thầy cô nào"
       ],
       "answer": "TỔ HÓA HỌC\nKhơi nguồn tri thức, gieo mầm đam mê khoa học.\nCon người tự cho mình là trung tâm của vũ trụ, nhưng khoa học đã chỉ ra rằng vũ trụ không có trung tâm, chúng ta chỉ sống trên một tinh cầu trôi dạt giữa khoảng không vô tận cùng hàng tỉ thiên thể khác.\nGiữa mênh mông vũ trụ đang cần được khám phá và tìm hiểu, HÓA HỌC sẽ đưa chúng ta đến những vô vàn thú vị và giúp chúng ta sống an toàn hơn…\n\tTổ HÓA HỌC trường THPT Ten Lơ Man là nơi hội tụ những trái tim nhiệt huyết, những khối óc sáng tạo và là nơi khơi dậy niềm đam mê khoa học, nơi nuôi dưỡng những khát vọng cho thế hệ trẻ. Với sứ mệnh gieo trồng tri thức, tổ Hóa học không chỉ mang đến những khái niệm, quan điểm về lý thuyết mà còn mở ra cánh cửa bước vào một thế giới khoa học kỳ thú, nơi mọi điều tưởng chừng bí ẩn đều được giải mã qua lăng kính hóa học.\n\tTrong những năm qua, nhiều thế hệ học sinh của tổ Hóa học đã gặt hái thành tích cao trong các kỳ thi học sinh giỏi, khoa học kỹ thuật cấp thành phố.\n\tPhía sau mỗi thành công ấy là sự dẫn dắt tận tâm của đội ngũ giáo viên – những người không chỉ là “người thắp lửa” mà còn là những người bạn đồng hành. Các tiết học được tổ chức sinh động, sáng tạo, kết hợp giữa lý thuyết và thực hành, giúp học sinh không chỉ hiểu sâu kiến thức mà còn biết vận dụng vào thực tiễn. Phòng thí nghiệm của tổ Hóa học luôn rộn ràng tiếng cười và ánh mắt háo hức của học trò khi tự tay khám phá, thử nghiệm và học hỏi.\n\tBao năm tháng đã qua, xin ngỏ lời biết ơn quý thầy cô cùng thế hệ đi trước. Tổ Hóa học đang vững vàng tiến bước, mang theo những giá trị cao đẹp của quá khứ để bồi đắp cho hiện tại và gieo mầm cho tương lai, viết tiếp những chương rực rỡ trong hành trình chinh phục tri thức và khoa học.\nTHÀNH TÍCH\n-\tGiáo viên: 05 Giáo viên đạt danh hiệu Chiến sĩ thi đua cơ sở, 01 GV nhận bằng khen của Chủ tịch UBND dân Thành phố.\n-\tHọc sinh: 04 HS giỏi cấp Thành phố; 11 HS đạt huy chương Olympic; 03 HS đạt giải hội thi Khoa học kỷ thuật cấp Thành phố.\n",
       "images": "images/thaycohoa.jpg",
-      "captions": "Hình ảnh các giáo viên trong tổ hiện nay.\nTừ trái sang: Cô Hoàng Thị Kim Phượng, Cô Đặng Nguyễn Mai Chi (TTCM), Thầy Nguyễn Quốc Bảo, Cô Nguyễn Thị Thanh Nhàn, Cô Trương Thị Hồng Nguyệt, Cô Nguyễn Thị Hạnh.\n"
+      "captions":["Hình ảnh các giáo viên trong tổ hiện nay.\nTừ trái sang: Cô Hoàng Thị Kim Phượng, Cô Đặng Nguyễn Mai Chi (TTCM), Thầy Nguyễn Quốc Bảo, Cô Nguyễn Thị Thanh Nhàn, Cô Trương Thị Hồng Nguyệt, Cô Nguyễn Thị Hạnh.\n"]
     },
     {
       "question": [
         "sinh học",
         "tổ sinh học",
+        "tổ sinh như thế nào",
+        "cho tôi biết về tổ sinh học",
+        "cho tôi dữ liệu về tổ sinh học",
+        "tổ sinh gồm những ai",
         "cho tôi biết về tổ sinh",
         "cho tôi dữ liệu về tổ sinh",
-        "tổ sinh như thế nào"
+        "tổ sinh học gồm những thầy cô nào",
+        "tổ sinh gồm những thầy cô nào"
       ],
       "answer": "TỔ SINH HỌC\nKhám phá sự sống, chinh phục tri thức\nTổ Sinh học của trường THPT Ten Lơ Man là nơi hội tụ những thầy cô giáo tận tâm, giàu kinh nghiệm và luôn tràn đầy nhiệt huyết trong việc truyền tải kiến thức khoa học đến học sinh. Với phương pháp giảng dạy hiện đại, kết hợp giữa lý thuyết và thực hành, các thầy cô không chỉ giúp học sinh nắm vững kiến thức cơ bản mà còn khơi dậy niềm đam mê học tập và khám phá thế giới tự nhiên.\nTrải qua nhiều thế hệ, tổ Sinh học đã phấn đấu không ngừng để đạt được những thành tích đáng khích lệ. Những thành công này không chỉ minh chứng cho năng lực của học sinh mà còn khẳng định sự dẫn dắt đầy tâm huyết của đội ngũ giáo viên trong tổ Sinh học.\n* Thành tích:\n- Nhiều năm liền đạt danh hiệu Tổ lao động xuất sắc.\n- Giáo viên: 01 giáo viên đạt Chiến sĩ thi đua cấp Thành phố; 01 giáo viên nhận Bằng khen Chủ tịch UBND Thành phố; 04 giáo viên là chiến sĩ thi đua cấp cơ sở; 02 giáo viên là Nhà giáo trẻ tiêu biểu Quận 1; 02 giáo viên là Gương điển hình tiên tiến, 01 giáo viên là Gương điển hình “Người tốt, việc tốt” giai đoạn 2022 – 2024; 01 giáo viên nhận Bằng khen của Chủ tịch Liên đoàn Lao động Thành phố đạt thành tích xuất sắc trong phong trào thi đua lao động giỏi, xây dựng Công đoàn vững mạnh; 01 giáo viên nhận Bằng khen Thành Đoàn về Hoàn thành xuất sắc nhiệm vụ trong Công tác Đoàn và Phong trào thanh niên, Chuyến dịch tình nguyện Hoa Phượng đỏ, Xuân tình nguyện trong năm học 2021 - 2022, 2022 - 2023, 2023 – 2024,…\n- Học sinh: 08 giải Học sinh giỏi cấp Thành phố khối 12; 08 huy chương Olympic khối 10, 11; 01 giải Giải toán trên máy tính cầm tay Casio khối 12; 02 giải ba nghiên cứu khoa học cấp trường, 01 giải khuyến khích hội thi thiết kế sản phẩm STEM trong trường trung học do Trường Đại học Sư phạm TPHCM tổ chức…\n",
       "images": "images/thaycosinh.jpg",
-      "captions": "Hình ảnh các giáo viên trong tổ hiện nay\nTừ trái sang phải: Thầy Trần Anh Lý, Cô Phan Nguyễn Hương Giang, Cô Phan Thị Phương Trang, Cô Trần Thị Trúc Đào, Thầy Lê Bá Khoa.\n"
+      "captions": ["Hình ảnh các giáo viên trong tổ hiện nay\nTừ trái sang phải: Thầy Trần Anh Lý, Cô Phan Nguyễn Hương Giang, Cô Phan Thị Phương Trang, Cô Trần Thị Trúc Đào, Thầy Lê Bá Khoa.\n"]
     },
     {
       "question": [
         "ngữ văn",
         "tổ văn",
+        "tổ ngữ văn như thế nào",
+        "tổ ngữ văn",
+        "tổ văn gồm những thầy cô nào",
         "cho tôi biết về tổ ngữ văn",
         "cho tôi dữ liệu về tổ ngữ văn",
-        "tổ ngữ văn như thế nào"
+        "cho tôi biết về tổ văn",
+        "cho tôi dữ liệu về tổ văn",
+        "tổ ngữ văn gồm những thầy cô nào"
       ],
       "answer": "TỔ NGỮ VĂN – TẬN TÂM, YÊU THƯƠNG VÀ TRÁCH NHIỆM\nNhà Ten muôn sắc ngàn hương\nTổ Văn gắn kết yêu thương vững bền\nTổ Ngữ văn trường THPT Ten Lơ Man mang sứ mệnh truyền cảm hứng về vẻ đẹp chân, thiện, mĩ trong văn học nghệ thuật và cuộc sống. \nĐó là nơi giúp học sinh tích lũy tri thức văn học của nhân loại, khơi dậy niềm đam mê với các tác phẩm văn chương; cảm nhận sức mạnh, giá trị của ngôn từ; hình thành cách nhìn, quan điểm sống nhân văn.\nĐó là nơi mỗi thầy, cô giáo luôn tận tâm trong giảng dạy, yêu thương trong giáo dục và có  trách nhiệm cao đối với sự nghiệp trồng người.\nĐó là nơi, dù chứng kiến bao sự đổi thay của nền giáo dục, những biến động của xã hội vẫn vẹn nguyên một mục đích: Dạy văn không chỉ truyền đạt tri thức mà còn xây dựng nền tảng đạo đức và nhân cách cho các thế hệ học sinh.\nĐó là nơi thầy trò đồng hành cùng nhau để gây dựng nên nhiều thành tích xuất sắc: học tập hiệu quả bằng các dự án mới lạ; bồi dưỡng học sinh giỏi, nghiên cứu khoa học đạt kết quả cao; hoạt động ngoại khóa hấp dẫn và giàu tính nhân văn…\nThành tích nổi bật (10 năm gần đây):\n-\t10 năm liền đạt danh hiệu tập thể lao động xuất sắc, tổ Công đoàn xuất sắc và được BCH Công đoàn ngành Giáo dục thành phố Hồ Chí Minh khen thưởng là tổ đạt thành tích tiêu biểu trong “Học tập và làm theo tư tưởng, đạo đức, phong cách Hồ Chí Minh giai đoạn 2022-2024”.\n-\tGiáo viên: 01 giáo viên dạy giỏi, 01 giáo viên chủ nhiệm giỏi cấp thành phố; 03 giáo viên hướng dẫn nghiên cứu khoa học đạt giải cao cấp trường, 01 giáo viên đạt danh hiệu Chiến sĩ thi đua cấp Thành phố, 03 giáo viên đạt danh hiệu Chiến sĩ thi đua cấp cơ sở nhiều năm liền.\n-\tHọc sinh: 05 năm liền tổ có học sinh đạt giải học sinh giỏi cấp Thành phố (khối 12) và giải Olympic tháng 4 (khối 10 và 11).\n",
       "images": "images/thaycovan.jpg",
-      "captions": "HÌNH 1:   Tổ Ngữ văn năm học 2024-2025\n(Từ trái qua: Cô Hà Ngân Trang, cô Nguyễn Thị Hoài Thương, cô Nguyễn Thị Huê Vân, cô Nguyễn Thị Phương Thảo- TPCM, cô Trần Thị Thu Hiền- TTCM, cô Phạm Đặng Thùy Dương-TTCĐ, cô Ngô Thị Ánh Hồng, cô Lê Phan Thanh Nhàn, cô Nguyễn Thị Lệ Thu).\n"
+      "captions": ["HÌNH 1:   Tổ Ngữ văn năm học 2024-2025\n(Từ trái qua: Cô Hà Ngân Trang, cô Nguyễn Thị Hoài Thương, cô Nguyễn Thị Huê Vân, cô Nguyễn Thị Phương Thảo- TPCM, cô Trần Thị Thu Hiền- TTCM, cô Phạm Đặng Thùy Dương-TTCĐ, cô Ngô Thị Ánh Hồng, cô Lê Phan Thanh Nhàn, cô Nguyễn Thị Lệ Thu).\n"]
     },
     {
       "question": [
         "sử học",
         "tổ sử",
+        "tổ lịch sử như thế nào",
+        "tổ lịch sử",
+        "tổ lịch sử gồm những thầy cô nào",
+        "tổ sử gồm những thầy cô nào",
         "cho tôi biết về tổ lịch sử",
         "cho tôi dữ liệu về tổ lịch sử",
-        "tổ lịch sử như thế nào"
+        "cho tôi biết về tổ sử",
+        "cho tôi dữ liệu về tổ sử"
       ],
       "answer": "TỔ LỊCH SỬ\n“Tiếp nối quá khứ, tô thắm tương lai”\nChủ tịch Hồ Chí Minh từng nói: “Dân ta phải biết sử ta; cho tường gốc tích nước nhà Việt Nam”. Câu nói đó của Người cho thấy, việc học và dạy lịch sử không chỉ để cho mọi người dân Việt Nam nhận biết rõ cội nguồn của mình, mà còn để bồi bổ, giáo dục tinh thần yêu nước, ý chí tự tôn, tự hào dân tộc. Cùng với bề dày lịch sử 75 năm truyền thống phát triển trường THPT Ten Lơ Man, tổ Lịch sử không chỉ là nơi lưu giữ và truyền tải những giá trị lịch sử sâu sắc, mà còn là mái nhà chung của những thầy cô đầy tâm huyết và sáng tạo. Với vai trò là những giáo viên dạy lịch sử, các thầy cô trong tổ Lịch sử luôn ý thức rất rõ về vai trò và trách nhiệm của mình trong việc dạy học. Trong suốt quá trình công tác, dù còn nhiều khó khăn nhưng tổ Lịch Sử đã vượt qua bằng sự đoàn kết và sáng tạo, để không ngừng mang lại những giá trị giáo dục ý nghĩa bền vững.\nTiếp nối truyền thống mà các thầy cô đi trước đã gầy dựng, giáo viên tổ Lịch sử hôm nay vẫn không ngừng nỗ lực trong giảng dạy và các hoạt động, bước đầu gặt hái được những thành tích nhất định như:\n- Tổ được tuyên dương Tập thể có thành tích tốt trong việc học tập và làm theo tấm gương đạo đức, phong cách Hồ Chí Minh năm 2018 do Quận ủy Quận 1 tổ chức.\n- Nhiều năm liền tổ đạt danh hiệu Tổ lao động xuất sắc.\n- Kết quả thi Tốt nghiệp THPT Quốc gia hàng năm luôn vượt tỉ lệ Thành phố.\n- Nhiều năm liền có học sinh tham gia và đạt giải trong kì thi học sinh giỏi cấp thành phố, bao gồm 12 giải Học sinh giỏi khối 12 (hạng Nhất, Nhì, Ba) và 10 huy chương kỳ thi Olympic 30/4 khối 10, 11 (hạng Vàng, Bạc, Đồng).\n- Có 01 cá nhân (Cô Nguyễn Thị Xuân Hương) được: Bằng khen của UBND Thành phố; nhiều năm liền là Chiến sĩ thi đua cơ sở; được nhận giấy khen của Ban Tuyên giáo Thành ủy TP. Hồ Chí Minh: Đạt giải Ba Hội thi Báo cáo viên giỏi TP. Hồ Chí Minh năm 2021 và nhiều giấy khen của Ban thường vụ Quận ủy Quận 1, giấy khen của BCH Công đoàn ngành giáo dục TP.HCM, giấy khen của Khối thi đua THPT công lập 01, …\n",
       "images": "images/thaycosu.jpg",
-      "captions": "Hình ảnh: Tổ lịch sử trong Lễ khai giảng năm học 2024 – 2025\n(Từ phải qua: cô Nguyễn Thị Xuân Hương – Tổ trưởng chuyên môn, cô Nguyễn Thị Hà – Tổ trưởng Công đoàn, cô Dương Thị Thu, thầy Nguyễn Trí Thuận)\n"
+      "captions": ["Hình ảnh: Tổ lịch sử trong Lễ khai giảng năm học 2024 – 2025\n(Từ phải qua: cô Nguyễn Thị Xuân Hương – Tổ trưởng chuyên môn, cô Nguyễn Thị Hà – Tổ trưởng Công đoàn, cô Dương Thị Thu, thầy Nguyễn Trí Thuận)\n"]
     },
     {
       "question": [
         "tổ địa",
         "địa lí",
-        "cho tôi biết về tổ địa lí",
+        "tổ địa lí như thế nào",
+        "tổ địa lí",
+        "tổ địa lý gồm những thầy cô nào",
+        "tổ địa gồm những thầy cô nào",
+        "cho tôi biết về tổ địa",
+        "cho tôi biết tổ địa lí",
         "cho tôi dữ liệu về tổ địa lí",
-        "tổ địa lí như thế nào"
+        "cho tôi dữ liệu về tổ địa"
       ],
       "answer": "Tổ Địa lí với phạm vi kiến thức chuyên môn đan xen giữa bộ môn khoa học tự nhiên (từ vũ trụ, khoa học Trái Đất đến các thành phần của thế giới tự nhiên) và bộ môn khoa học xã hội (dân cư, kinh tế, xã hội), trải qua những sự đổi thay của đất nước và chương trình dạy học, tuy không phải bộ môn quan trọng hàng đầu nhưng đã có những bước chuyển mình vô cùng ăn khớp với sự thay đổi của xã hội và thời đại. Từ bộ môn “học gạo”, “học tủ” rất “khô khan” của nhiều bạn học sinh, tổ bộ môn Địa lí đã không ngừng thay đổi, đưa nhiều chất liệu mới vào bài giảng và chương trình học, đưa các em học sinh đến với cánh cửa tri thức đa dạng mà gần gũi.\nTập thể giáo viên của tổ Địa lí cũng không ngừng phấn đấu đi lên, liên tục trong nhiều năm liền là Tổ lao động tiên tiến xuất sắc cùng các danh hiệu thi đua cá nhân như “Chiến sĩ thi đua cấp cơ sở”, “Phụ nữ giỏi việc nước đảm việc nhà”, “Nhà giáo trẻ tiêu biểu Quận 1”… cùng những chương trình ngoại khóa đậm nét chuyên môn Địa lí như: “Chợ nổi”, “Về đất phương nam - Chợ quê”, “Hiệp hội các nước Đông Nam Á”\nVới sự nỗi lực không ngừng, sự đoàn kết chặt chẽ và tấm lòng nhiệt huyết cùng công việc, tổ bộ môn Địa lí sẽ tiếp tục vươn lên, thực hiện ngày càng tốt hơn các nhiệm vụ, mục tiêu trong giảng dạy; tiếp tục truyền cảm hứng học tập và khám phá cho các thế hệ học sinh tiếp theo.\n",
       "images": "images/thaycodia.jpg",
-      "captions": "Tập thể giáo viên tổ Địa lí hiện tại\n(Từ trái sang phải: cô Nguyễn Thị Ngọc Ảnh - Tổ trưởng chuyên môn; thầy Võ Minh Nhàn; cô Lê Thị Thành Lê)\n"
+      "captions": ["Tập thể giáo viên tổ Địa lí hiện tại (Từ trái sang phải:Cô Nguyễn Thị Ngọc Ánh-Tổ trưởng chuyên môn; Thầy Võ Minh Nhàn; Cô Lê Thị Thành Lê)"]
     },
     {
       "question": [
         "tổ anh văn",
         "anh văn",
+        "tổ anh văn như thế nào",
+        "tổ anh",
+        "tổ anh văn gồm những thầy cô nào",
+        "tổ anh gồm những thầy cô nào",
         "cho tôi biết về tổ anh văn",
         "cho tôi dữ liệu về tổ anh văn",
-        "tổ anh văn như thế nào"
+        "cho tôi biết về tổ anh",
+        "cho tôi dữ liệu về tổ anh"
       ],
       "answer": "TỔ NGOẠI NGỮ - HÀNH TRÌNH NHỮNG NGƯỜI MANG LỬA\nKhông chỉ dừng lại ở việc giảng dạy lý thuyết, tổ Ngoại ngữ luôn tổ chức các hoạt động ngoại khóa đầy sáng tạo và sôi nổi, từ Câu lạc bộ tiếng Anh đến các cuộc thi thú vị, như “English and Joys”, “I Can Compose”, “Spread the World”, “Ring the Golden Bell”, “International Culture Festival”. Đặc biệt là cuộc thi review sách với chủ đề “Cultivating knowledge through reading”, được tổ chức phối hợp với thư viện nhà trường. Đây là một hoạt động không chỉ giúp học sinh phát triển khả năng viết và nói tiếng Anh mà còn khuyến khích các em khám phá các cuốn sách, mở rộng vốn hiểu biết và nuôi dưỡng thói quen đọc sách. Qua đó, các em không chỉ được rèn luyện khả năng ngôn ngữ mà còn học hỏi, trải nghiệm những giá trị văn hóa đa dạng từ các quốc gia khác nhau. Đây chính là cầu nối giúp học sinh không chỉ nắm vững kiến thức mà còn hiểu và cảm nhận được vẻ đẹp của thế giới đa ngữ, đa văn hóa.\nChúng tôi tự hào với những thành tích nổi bật mà Tổ Ngoại ngữ đã đạt được trong suốt các năm qua:\n • Liên tục đạt danh hiệu Tổ Lao động tiên tiến xuất sắc.\n • Gặt hái nhiều huy chương trong Cuộc thi Olympic Tháng 4 TP.HCM khối 10 và khối 11 nhiều năm liền. Ngoài ra, mỗi năm đội tuyển HSG môn Tiếng Anh lớp 12 đều xuất sắc giành được nhiều giải thưởng, đặc biệt trong năm học 2020-2021, đội tuyển đã mang về 8 giải cho trường.\n • Trung bình điểm thi TN THPT đều vượt tỉ lệ thành phố mỗi năm, điều này đã khẳng định chất lượng đào tạo của tổ Ngoại Ngữ.\n• Tổ chức thành công các hoạt động ngoại khóa “English and Joys”, “I Can Compose”, “Spread the World”, “Ring the Golden Bell” và “International Culture Festival”.\n • Nhiều giáo viên đạt danh hiệu Chiến sĩ Thi đua cấp cơ sở, với các tiết thao giảng hấp dẫn và sáng tạo, trong đó tiết dạy liên môn Anh - Lý năm học 2023-2024 đã để lại ấn tượng sâu sắc.\nVới sự đoàn kết, sáng tạo và nỗ lực không ngừng, chúng tôi tin rằng Tổ Ngoại Ngữ sẽ tiếp tục vươn lên, gặt hái nhiều thành công lớn, truyền cảm hứng học tập và khám phá cho các thế hệ học sinh tiếp theo.\n\n",
       "images": "images/thaycoanh.jpg",
-      "captions": "Các thành viên tổ Ngoại Ngữ trong lễ khai giảng năm học 2024-2025\n(Từ trái sang: cô Trần Thị Kim Huệ, cô Trần Thị Quỳnh Như, cô Lê Quỳnh Tiên Đan, cô Lê Tường Cảnh Hân, cô Lê Nguyễn Lan Hương, cô Trang Đinh Đan, cô Nguyễn Thị Thanh Trà, cô Lê Thị Thu Hiền, cô Trần Lý Giao Nguyên)\n"
+      "captions": ["Các thành viên tổ Ngoại Ngữ trong lễ khai giảng năm học 2024-2025\n(Từ trái sang: cô Trần Thị Kim Huệ, cô Trần Thị Quỳnh Như, cô Lê Quỳnh Tiên Đan, cô Lê Tường Cảnh Hân, cô Lê Nguyễn Lan Hương, cô Trang Đinh Đan, cô Nguyễn Thị Thanh Trà, cô Lê Thị Thu Hiền, cô Trần Lý Giao Nguyên)\n"]
     },
     {
       "question": [
         "tổ GDKTPL",
         "giáo dục kinh tế pháp luật",
+        "tổ GDKTPL như thế nào",
+        "tổ GDKTPL gồm những thầy cô nào",
         "cho tôi biết về tổ GDKTPL",
         "cho tôi dữ liệu về tổ GDKTPL",
-        "tổ GDKTPL như thế nào"
+        "GDKTPL"
       ],
       "answer": "TỔ GIÁO DỤC KINH TẾ VÀ PHÁP LUẬT\nTổ bộ môn Giáo dục Kinh tế và Pháp luật, trước đây là tổ Giáo dục công dân, có vai trò quan trọng trong việc định hướng giáo dục toàn diện, góp phần xây dựng thế hệ công dân có trách nhiệm và nhận thức sâu sắc về kinh tế và pháp luật trong xã hội hiện đại, góp phần phát triển ý thức công dân và trách nhiệm xã hội. Đồng thời giúp học sinh hiểu và tuân thủ các quy định của pháp luật, nâng cao ý thức về quyền lợi và nghĩa vụ trong các lĩnh vực như lao động, sở hữu trí tuệ, bảo vệ môi trường, ... Bên cạnh đó, các hoạt động giảng dạy của tổ còn giúp phát triển năng lực công dân toàn cầu, chuẩn bị cho học sinh khả năng thích nghi với nền kinh tế toàn cầu hóa và xã hội pháp quyền hiện đại, cung cấp thêm hiểu biết về thương mại quốc tế, pháp luật quốc tế và kinh tế thị trường. \n\tThành tích: \n- Nhiều năm liền đạt thành tích xuất sắc trong công tác ôn thi tốt nghiệp. \n- Giáo viên: 01 GV đạt giải “Người tuyên truyền pháp luật giỏi” cấp thành phố, 01 GV hướng dẫn 05 HS đạt giải khuyến khích cuộc thi “Học sinh, sinh viên với ý tưởng khởi nghiệp” cấp thành phố, 03 GV là Chiến sĩ thi đua cấp cơ sở, 01 GV là Nhà giáo trẻ tiêu biểu Quận 1. \n- Hoc sinh: 02 HS đạt giải 3 cuộc thi “An toàn giao thông vì nụ cười ngày mai” cấp thành phố, 05 HS đạt giải khuyến khích cuộc thi “Học sinh, sinh viên với ý tưởng khởi nghiệp” cấp thành phố. \n",
       "images": "images/thaycoktpl.jpg",
-      "captions": "Hình ảnh các giáo viên trong tổ hiện nay:\nTừ trái sang phải: cô Phạm Ngọc Lý, cô Đỗ Thị Thanh Xuân (Tổ trưởng công đoàn),\ncô Võ Thị Mỹ Trang (Tổ trưởng chuyên môn).\n"
+      "captions": ["Hình ảnh các giáo viên trong tổ hiện nay:\nTừ trái sang phải: cô Phạm Ngọc Lý, cô Đỗ Thị Thanh Xuân (Tổ trưởng công đoàn),\ncô Võ Thị Mỹ Trang (Tổ trưởng chuyên môn).\n"]
     },
     {
       "question": [
         "tổ GDTC",
         "giáo dục thể chất",
-        "cho tôi biết về tổ giáo dục thể chất",
-        "cho tôi dữ liệu về tổ giáo dục thể chất",
-        "tổ giáo dục thể chất như thế nào"
+        "tổ giáo dục thể chất như thế nào",
+        "tổ GDTC gồm những thầy cô nào",
+        "cho tôi biết về tổ GDTC",
+        "cho tôi dữ liệu về tổ GDTC"
       ],
       "answer": "TỔ GIÁO DỤC THỂ CHẤT \nI.\tQuá trình hình thành\n\tTổ Giáo dục Thể chất (GDTC) hiện nay từng là tổ ghép với các bộ môn khác với tên gọi tổ Sinh – Thể dục – Giáo dục công dân, tổ Sinh – Thể dục, và tổ Thể dục – Giáo dục Quốc phòng và an ninh (GDQP&AN).\nVào năm học 2022 – 2023, khi Chương trình giáo dục phổ thông 2018 chính thức được triển khai cho khối trung học phổ thông, môn Thể dục đã được chuyển tên thành môn Giáo dục Thể chất theo yêu cầu của chương trình mới. \nKể từ tháng 9 năm 2022, tổ Thể dục – GDQP&AN đã được tách ra thành tổ Giáo cục Thể chất.\nII.\t Một số thành tích tiêu biểu của tổ\nNhờ sự quan tâm và hỗ trợ từ Ban lãnh đạo, cùng sự nỗ lực không ngừng của các thầy cô trong tổ, công tác giáo dục thể chất tại trường ngày càng phát triển mạnh mẽ. Phong trào thể thao không chỉ phát triển mạnh mẽ ở cấp quận mà còn đạt nhiều thành tích cao tại các giải đấu cấp thành phố. Những thành công này là minh chứng rõ nét cho sự trưởng thành và phát triển bền vững của tổ Giáo dục Thể chất trong suốt 75 năm qua.\nTổ Giáo dục Thể chất sẽ tiếp tục phát huy những thành tích đạt được, không ngừng nâng cao chất lượng giảng dạy và huấn luyện, góp phần xây dựng một môi trường học tập năng động, lành mạnh, khuyến khích học sinh rèn luyện thể chất và phát triển toàn diện.\n",
       "images": "images/thaycogdtc.jpg",
-      "captions": "Thầy Lê Xuân Huy (TTCM), Thầy Di Minh Trí, Cô Võ Thị Ngọc Hạnh, Cô Nguyễn Thị Giao, Thầy Bạch Văn Gân (TTCM Tổ GDQP&AN, dạy kiêm nhiệm môn GDTC).\n"
+      "captions": ["Thầy Lê Xuân Huy (TTCM), Thầy Di Minh Trí, Cô Võ Thị Ngọc Hạnh, Cô Nguyễn Thị Giao, Thầy Bạch Văn Gân (TTCM Tổ GDQP&AN, dạy kiêm nhiệm môn GDTC).\n"]
     },
     {
       "question": [
         "tổ GDQPAN",
         "giáo dục quốc phòng an ninh",
-        "cho tôi biết về tổ GDANQP",
-        "cho tôi dữ liệu về tổ GDANQP",
-        "tổ GDANQP như thế nào"
+        "tổ GDQPAN như thế nào",
+        "tổ GDQPAN gồm những thầy cô nào",
+        "cho tôi biết về tổ GDQPAN",
+        "cho tôi dữ liệu về tổ GDQPAN"
       ],
       "answer": "TỔ GIÁO DỤC QUỐC PHÒNG – AN NINH\n* Phương châm của Tổ GDQP - AN: \nChia sẻ - Đoàn kết - Vững bước - Phát triển\n*Thành tích nổi bật của Tổ GDQP - AN: \n- Tập thể Lao động xuất sắc.\n- Tổ Công đoàn xuất sắc.\n- 1 giáo viên đạt giải Nhất hội thi giáo viên dạy Giỏi cấp Thành phố.\n- 1 giáo viên nhận bằng khen của Liên đoàn lao động Thành phố.\n- 3 giáo viên đạt chiến sĩ thi đua cấp Cơ sở.\n- 2 giáo viên đạt danh hiệu Công đoàn viên xuất sắc.\n- Các thành viên trong Tổ đã từng đạt các giải cao trong hội thao Công đoàn Ngành giáo dục: Vô địch môn Kéo co; Giải ba hội thi Đua xuồng hơi cao su.\n*  Trước năm 2022 có tên là Tổ Thể dục – Quốc phòng gồm:\n+ Thầy Lê Xuân Huy\n+ Thầy Di Minh Trí\n+ Cô Võ Thị Ngọc Hạnh\n+ Cô Nguyễn Thị Giao\n+ Thầy Bạch Văn Gân\n* Đến 01/09/2022 thành lập Tổ Giáo dục Quốc phòng – An ninh và các thành viên tổ hiện nay:\n+ Thầy Bạch Văn Gân\n+ Cô Nguyễn Thị Huỳnh Như \n+ Thầy Trương Ngọc Đại\n",
       "images": null,
@@ -680,20 +724,19 @@
       "question": [
         "tổ văn phòng",
         "to van phong",
+        "tổ văn phòng như thế nào",
+        "tổ văn phòng gồm những thầy cô nào",
         "cho tôi biết về tổ văn phòng",
-        "cho tôi dữ liệu về tổ văn phòng",
-        "tổ văn phòng như thế nào"
+        "cho tôi dữ liệu về tổ văn phòng"
       ],
       "answer": "TỔ VĂN PHÒNG ĐỒNG HÀNH CÙNG SỰ PHÁT TRIỂN\nTuy không trực tiếp giảng dạy, nhưng 75 năm qua tổ Văn phòng đã đồng hành cùng kề vai, sát cánh, chung sức gánh vác sự nghiệp trồng người của nhà trường với những nhiệm vụ thầm lặng và chức năng đặc thù thực hiện các công việc hành chính và phục vụ công tác giảng dạy của trường. \n\tTổ có 17 thành viên gồm các bộ phận kế toán, thủ quỹ, thư viện, văn thư, y tế, học vụ, giám thị, bảo vệ và phục vụ. Những công việc thầm lặng đó có liên quan đến điều hành chung hoạt động của nhà trường về đảm bảo điều kiện vật chất, tài chính và tài liệu tham khảo cho học sinh và cán bộ giáo viên, công tác văn thư và hồ sơ sổ sách học tập của học sinh. Các bộ phận luôn chấp hành nghiêm túc công việc của mình nhằm thực hiện tốt nhất kế hoạch của nhà trường đề ra.\nTuy mỗi bộ phận đảm nhiệm một công việc khác nhau nhưng tất cả đều hướng về một mục đích là phục vụ tốt cho giảng dạy và học tập, đều cùng nhau cố gắng hoàn thành tốt công việc được phân công. Vai trò của tổ Văn phòng không thể thiếu được trong các hoạt động chung của nhà trường. Dù công việc thầm lặng nhưng tổ đã góp phần không nhỏ vào thành tích chung của nhà trường. \n\tThành tích:\n\t+ Nhiều năm liền đạt thành tích xuất sắc trong hoạt động Công đoàn Ngành.\n\t+ Nhiều nhân viên vinh dự nhận được Giấy khen Công đoàn Ngành Giáo dục Thành phố Hồ Chí Minh;\n\t+ Tổ vinh dự nhận được Giấy khen của Sở Giáo dục và Đào tạo Thành phố Hồ Chí Minh và Khối thi đua 01 – THPT về tập thể điển hình có thành tích xuất sắc trong phong trào thi đua;\n\t+ Nhiều nhân viên đã vinh dự nhận được Giấy khen của Sở Giáo dục và Đào tạo Thành phố Hồ Chí Minh và Khối thi đua về gương cá nhân điển hình có thành tích xuất sắc trong phong trào thi đua năm học 2022 – 2023 và 2023 – 2024;\n\n",
       "images": "images/thaycovanphong.jpg",
-      "captions": "Hình ảnh các giáo viên trong tổ hiện nay\n\tTừ trái sang phải cô Nguyễn Thị Thanh Yến, cô Nguyễn Thị Ngọc Giàu, cô Nguyễn Thị Ngọc Hương, cô Vương Lệ Chi, thầy Lê Nam Thái, cô Hoàng Thị Ngọc Hoa, thầy Trần Hải Bình, thầy Nguyễn Hùng Khương, cô Phan Thị Phương Trang, cô Trần Anh Thư, thầy Vũ Minh Bằng, cô Nguyễn Hồng Diễm, thầy Bùi Đoàn Trọng Nguyên, cô Nguyễn Nguyễn Thương Thương.\n"
+      "captions": ["Hình ảnh các giáo viên trong tổ hiện nay\n\tTừ trái sang phải cô Nguyễn Thị Thanh Yến, cô Nguyễn Thị Ngọc Giàu, cô Nguyễn Thị Ngọc Hương, cô Vương Lệ Chi, thầy Lê Nam Thái, cô Hoàng Thị Ngọc Hoa, thầy Trần Hải Bình, thầy Nguyễn Hùng Khương, cô Phan Thị Phương Trang, cô Trần Anh Thư, thầy Vũ Minh Bằng, cô Nguyễn Hồng Diễm, thầy Bùi Đoàn Trọng Nguyên, cô Nguyễn Nguyễn Thương Thương.\n"]
     },
     {
       "question": [
         "các hoạt động phong trào",
         "hoạt động phong trào",
-        "cho tôi biết về các hạot động phong trào của trường",
-        "cho tôi tham khảo qua các hoạt động phong trào của trường",
         "các hoạt động phong trào của trường gồm những gì"
       ],
       "answer": "đây là tất cả các hoạt động phong trào của truờng",
@@ -743,16 +786,16 @@
     {
       "question": ["video giới thiệu", "xem video", "clip"],
       "answer": "Đây là video và một số hình ảnh giới thiệu về trường của chúng tôi:",
-      "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      "images": ["images/5os.jpg", "images/ai.jpg"],
-      "captions": ["Hình ảnh khuôn viên trường", "Hình ảnh sinh viên"]
+      "video_url": "https://www.youtube.com/watch?v=HzvZVAvBkto",
+      "images": null,
+      "captions": null
     },
     {
       "question": ["Giới thiệu về trường"],
       "answer": "Trường chúng tôi là một trong những cơ sở giáo dục hàng đầu, với lịch sử lâu đời và nhiều thành tựu nổi bật. Chúng tôi cam kết mang đến một môi trường học tập hiện đại và chất lượng cao.",
-      "images": ["images/5os.jpg"],
-      "captions": ["Toàn cảnh khuôn viên trường"],
-      "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+      "images": null,
+      "captions": null,
+      "video_url": "https://www.youtube.com/watch?v=HzvZVAvBkto"
     },
     {
       "question":["vắng có phép buổi 1","vắng có phép buổi 2","vắng có phép sáng","vănng có phép chiều"],
@@ -857,7 +900,7 @@
       "captions": null
     },
     {
-      "question": ["sử dụng theiét bị điện tử lần 1","sử dụng thiết bị điện tử lần 2","sử dụng thiết bị điện tử lần 3"],
+      "question": ["sử dụng thiết bị điện tử lần 1","sử dụng thiết bị điện tử lần 2","sử dụng thiết bị điện tử lần 3"],
       "answer": "học sinh sử dụng thiết bị điện tử như điện thoại, tai nghe, máy nghe nhạc lần 1 sẽ bị trừ 2 điểm hạnh kiểm, lần 2 sẽ bị trừ 4 điểm hạnh kiểm, lần 3 sẽ bị trừ 8 điểm hạnh kiểm",
       "images": null,
       "captions": null
@@ -967,6 +1010,43 @@
     {
       "question": ["đánh bạn","phá hoại tài sản nhà trường","kêu người ngoài đánh bạn","mang chất gây nổ","mang hung khí","vô lễ","xúc phạm nhân viên nhà trường","vi phạm luật giao thông"],
       "answer": "học sinh sẽ bị trừ 14 điểm hạnh kiểm",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["máy lạnh","điều hoà","trường có máy lạnh không","lớp học có máy lạnh không","căn tin có máy lạnh không"],
+      "answer": "100% lớp học, thư viện đều được trang bị 2 máy lạnh và căn tin cũng có máy lạnh",
+      "images": null,
+      "captions": null
+    },
+    {
+      "question": ["văn phòng đoàn","đoàn viên","cho tôi biết về văn phòng đoàn","cho tôi dữ liệu về văn phòng đoàn","cho tôi biết về đoàn viên","cho tôi dữ liệu về đoàn viên"],
+      "answer": "Đoàn trường THPT Ten Lơ Man trực thuộc Quận đoàn 1, tọa lạc tại số 8 Trần Hưng Đạo, Phường Phạm Ngũ Lão, Quận 1. Với bề dày truyền thống hơn 74 năm gắn liền sự kiện “Ngày Toàn quốc Chống Mỹ” 19/3/1950, Đoàn trường THPT Ten Lơ Man luôn chú trọng việc nâng cao chất lượng hoạt động Đoàn thông qua việc đổi mới hình thức, phát huy vai trò, năng lực, phẩm chất của đoàn viên, học sinh. Đặc biệt, công tác Đoàn và phong trào thanh niên trong nhà trường luôn là điểm sáng và là nơi để đoàn viên, thanh niên nhà trường không ngừng rèn luyện, trau dồi và phát huy tinh thần của tuổi trẻ năng động, bản lĩnh và xung kích.\n\tNhiều năm liền Đoàn trường THPT Ten Lơ Man là đơn vị xuất sắc, dẫn đầu trong các hoạt động thi đua của Cụm và Quận 1. Với sự quan tâm sâu sát từ phía Ban lãnh đạo nhà trường, Ban thường vụ Quận đoàn 1, sự hỗ trợ và đồng hành của cha mẹ học sinh là cơ sở quyết định cho Đoàn trường có thể phát triển toàn diện, chất lượng cho đội ngũ cán bộ đoàn, thanh niên của nhà trường.\nĐoàn trường với tỉ lệ đoàn viên hàng năm từ 50 - 65% luôn đảm bảo về số lượng và chất lượng đoàn viên trong nhà trường. Với gần 40 chi đoàn trực thuộc, đây là những vệ tinh quan trọng trong việc triển khai các nội dung, hoạt động trọng điểm trong các năm học. Trên cơ sở đó, nhiều năm qua Đoàn trường THPT Ten Lơ Man đạt nhiều kết quả khả quan, tiêu biểu trong cụm thi đua, Quận 1 và toàn Thành phố.\n-Tập thể Đoàn TNCS Hồ Chí Minh Trường THPT Ten Lơ Man vinh dự nhận Bằng khen TW Đoàn trong năm học 2018 – 2019 và năm học 2023 – 2024.\n-Đồng chí Đỗ Toàn nguyên Bí thư và đồng chí Nguyễn Phạm Mỹ Ngân nguyên Phó Bí thư Đoàn Trường THPT Ten Lơ Man vinh dự nhận Bằng khen TW Đoàn do có thành tích xuất sắc trong Công tác Đoàn và phong trào thanh niên.\n-Trong năm học 2023 – 2024, Đoàn trường đã ghi dấu một cột mốc đáng tự hào khi lần đầu tiên bồi dưỡng và giới thiệu đồng chí Trần Ngọc Thủy Tiên – Ủy viên Ban Chấp hành Đoàn trường, Bí thư Chi đoàn 12A3 – vinh dự được kết nạp vào Đảng Cộng sản Việt Nam. \nBên cạnh đó, Đoàn trường THPT Ten Lơ Man tự hào được ghi nhận bằng loạt Bằng khen từ Thành đoàn Thành phố Hồ Chí Minh, Giấy khen của Chủ tịch UBND Quận 1 và Giấy khen Quận đoàn 1. Đây là minh chứng rõ nét cho những nỗ lực không ngừng và những kết quả tiêu biểu mà Đoàn trường đã đạt được trong năm học vừa qua. \nHiện nay, các hoạt động Đoàn Thanh niên tại Trường THPT Ten Lơ Man đã và đang trở thành một phần không thể thiếu trong các hoạt động của nhà trường, mang lại những giá trị tinh thần và thực tiễn to lớn cho học sinh. Đây không chỉ là sân chơi lành mạnh giúp các em rèn luyện kỹ năng, phát huy tài năng mà còn là nơi xây dựng tinh thần đoàn kết, trách nhiệm và tình yêu quê hương, đất nước, đẩy mạnh giao lưu quốc tế.\n",
+      "images": "images/vpd.jpg",
+      "captions": ["Đây là tập thể văn phòng đoàn"]
+    },
+    {
+      "question": ["Thầy Hùng Khương","Thầy Nguyễn Hùng Khương","Thầy Hiệu Trưởng","Hiệu trưởng","Hiệu trưởng nhà trường"],
+      "answer": "Thầy Nguyễn Hùng Khương - Người thắp sáng tầm nhìn chiến lược\nVới vai trò là Bí thư chi bộ và Hiệu trưởng nhà trường, thầy Nguyễn Hùng Khương đã góp phần quan trọng trong việc định hình phong cách giáo dục hiện đại, gắn kết truyền thống với sự đổi mới. Thầy luôn là một người lãnh đạo vui vẻ, thân thiện nhưng quyết đoán, tận tâm và sáng tạo trong việc xây dựng những chính sách giáo dục toàn diện. Nhờ có sự dẫn dắt của thầy, trường THPT Ten Lơ Man không chỉ là nơi đào tạo những thế hệ học sinh tài năng, mà còn là một ngôi nhà chung đầy yêu thương và khích lệ sáng tạo.\n",
+      "images": ["images/tht.jpg","images/tht1.jpg"],
+      "captions": ["Thầy Nguyễn Hùng Khương – Hiệu trưởng phát biểu trong Lễ Khai giảng năm học 2024 - 2025","Thầy Nguyễn Hùng Khương – Hiệu trưởng"]
+    },
+    {
+      "question": ["Thầy Bình","Thầy Trần Hải Bình","Trần Hải Bình","Thầy hiệu phó"],
+      "answer": "Thầy Trần Hải Bình - Trái tim của chân chính nghiêm minh và kỷ luật\nVới vai trò Phó Hiệu trưởng phụ trách chuyên môn và kỷ luật học sinh, thầy đã mang đến những đóng góp thiết thực trong việc duy trì nề nếp kỷ cương và kỷ luật nghiêm minh của nhà trường. Thầy luôn đặt lợi ích của học sinh lên hàng đầu, đề cao tinh thần giáo dục nhân cách song hành cùng việc rèn luyện tri thức. Nhờ vào những nguyên tắc quản lý kỷ luật hiệu quả của thầy, nhà trường luôn đảm bảo môi trường học tập an toàn, kỷ cương và lành mạnh.\n",
+      "images": "images/thp.jpg",
+      "captions": ["Thầy Trần Hải Bình – Phó Hiệu trưởng"]
+    },
+    {
+      "question": ["Cô Trang","Cô Phan Thị Phương Trang","Phan Thị Phương Trang","Cô hiệu phó"],
+      "answer": "Cô Phan Thị Phương Trang - Hiện thân của sự dẫn dắt và tận tâm\nGiữ vai trò Phó Bí thư chi bộ và Phó Hiệu trưởng nhà trường, cô Phan Thị Phương Trang là một nhân tố lãnh đạo tận tâm và luôn sát cánh cùng thầy trò trong nhiều hoạt động, chăm lo, bảo quản các trang thiết bị, cơ sở vật chất phục vụ các hoạt động dạy học. Cô chú trọng việc kết nối giữa các thành viên trong nhà trường, góp phần tạo nên sự gắn kết chặt chẽ giữa giáo viên và học sinh. Bên cạnh đó cô còn phụ công tác tổ chức bán trú, quan tâm các hoạt động ngoại khóa, các phong trào thi đua đã mang lại những kỷ niệm đẹp và ấn tượng cho nhiều thế hệ học sinh. \n",
+      "images": "images/chp.jpg",
+      "captions": ["Cô Phan Thị Phương Trang – Phó Hiệu trưởng"]
+    },
+    {
+      "question": ["bài hát của trường","bài hát","hành khúc thpt ten lơ man"],
+      "answer":"đây là bài hát của trường",
+      "video_url": "https://www.youtube.com/watch?v=tgECMlXzSU4",
       "images": null,
       "captions": null
     }
