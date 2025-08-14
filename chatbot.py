@@ -5,10 +5,10 @@ import streamlit as st
 import os
 import torch
 import re
-from PIL import Image
-from transformers import AutoModel, AutoTokenizer
-from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+from PIL import Image
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
 
 # Xác định thiết bị
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -32,39 +32,27 @@ except Exception as e:
     st.error(f"Lỗi khi tải admissions_data.json: {e}")
     admissions_data = {"questions": []}
 
-# Tải mô hình Transformer
+# Tải mô hình SentenceTransformer
 try:
     @st.cache_resource
     def load_model():
-        # Sử dụng mô hình PhoBERT
-        tokenizer = AutoTokenizer.from_pretrained("vinai/phobert-base-v2")
-        model = AutoModel.from_pretrained("vinai/phobert-base-v2").to(device)
-        return tokenizer, model
+        # Sử dụng mô hình sup-SimCSE-VietNamese-phobert-base
+        model = SentenceTransformer('VoVanPhuc/sup-SimCSE-VietNamese-phobert-base').to(device)
+        return model
 
-    tokenizer, model = load_model()
+    model = load_model()
 except Exception as e:
-    st.error(f"Lỗi khi tải mô hình PhoBERT: {e}")
-    tokenizer, model = None, None
+    st.error(f"Lỗi khi tải mô hình SentenceTransformer: {e}")
+    model = None
 
-# Chức năng tạo embedding thủ công vì PhoBERT không phải là SentenceTransformer
+# Chức năng tạo embedding
 def get_embedding(text, tokenizer, model):
-    if not tokenizer or not model:
+    if not model:
         return None
-
-    # Tokenize và chuyển đổi thành ID
-    inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=512)
-    inputs = {key: value.to(device) for key, value in inputs.items()}
-
-    # Lấy output từ mô hình
-    with torch.no_grad():
-        outputs = model(**inputs)
-
-    # Sử dụng embedding của token [CLS] làm embedding cho toàn bộ câu
-    embeddings = outputs.last_hidden_state[:, 0, :].squeeze().detach().cpu().numpy()
-    return embeddings
+    return model.encode(text, convert_to_numpy=True)
 
 # Tạo embedding cho tất cả các câu hỏi trong dữ liệu để tăng tốc độ
-if tokenizer and model and 'question_embeddings' not in st.session_state:
+if model and 'question_embeddings' not in st.session_state:
     st.session_state.question_texts = []
     st.session_state.question_data_map = {}
     for item in admissions_data['questions']:
@@ -81,7 +69,7 @@ if tokenizer and model and 'question_embeddings' not in st.session_state:
 
     if st.session_state.question_texts:
         st.session_state.question_embeddings = np.array(
-            [get_embedding(q, tokenizer, model) for q in st.session_state.question_texts])
+            [get_embedding(q, None, model) for q in st.session_state.question_texts])
     else:
         st.session_state.question_embeddings = None
         print("Warning: No valid questions found in admissions_data['questions'].")
@@ -94,11 +82,9 @@ def find_answer_and_media(question):
     if not isinstance(question, str):
         question = str(question)
     question = re.sub(r'\s+', ' ', question.strip().lower())
-    # Chuẩn hóa query: loại bỏ các cụm từ như "về", "tôi muốn biết về", "giới thiệu về", v.v.
-    question = re.sub(r'(tôi muốn biết|tìm hiểu|giới thiệu|thông tin|hỏi|biết)\s*(về)?\s*', '', question).strip()
 
     # Tạo embedding cho câu hỏi của người dùng
-    query_embedding = get_embedding(question, tokenizer, model)
+    query_embedding = get_embedding(question, None, model)
 
     # Tính độ tương đồng cosine giữa câu hỏi người dùng và tất cả các câu hỏi đã có
     cosine_scores = cosine_similarity([query_embedding], st.session_state.question_embeddings)[0]
@@ -155,7 +141,7 @@ def main():
                 st.video(message["video"])
             if "images" in message:
                 valid_images_paths = [img_path for img_path in message["images"] if
-                                      isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
+                                      isinstance(img_path, str) and os.path.exists(img_path) and img.strip() != ""]
                 if valid_images_paths:
                     num_cols = min(len(valid_images_paths), 3)
                     cols = st.columns(num_cols)
