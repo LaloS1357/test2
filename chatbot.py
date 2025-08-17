@@ -80,47 +80,56 @@ def find_answer_and_media(question):
     # Chuẩn hóa query: loại bỏ các cụm từ như "về", "tôi muốn biết về", "giới thiệu về", v.v.
     question = re.sub(r'(tôi muốn biết|tìm hiểu|giới thiệu|thông tin|hỏi|biết)\s*(về)?\s*', '', question).strip()
 
-    # Tạo embedding cho câu hỏi của người dùng bằng phương thức encode()
-    query_embedding = model.encode([question])
+    # Bước 1: Kiểm tra khớp từ khóa chính xác trong question
+    best_match = None
+    for item in admissions_data['questions']:
+        questions = item['question'] if isinstance(item['question'], list) else [item['question']]
+        for q in questions:
+            if isinstance(q, str) and question in q.lower():
+                best_match = item
+                break
+        if best_match:
+            break
 
-    # Tính độ tương đồng cosine giữa câu hỏi người dùng và tất cả các câu hỏi đã có
-    cosine_scores = cosine_similarity(query_embedding, st.session_state.question_embeddings)[0]
+    # Bước 2: Nếu không có khớp chính xác, dùng embedding để tìm
+    if best_match is None:
+        query_embedding = model.encode([question])
+        cosine_scores = cosine_similarity(query_embedding, st.session_state.question_embeddings)[0]
+        best_score = np.max(cosine_scores)
+        best_index = np.argmax(cosine_scores)
+        if best_score < 0.5:
+            return "Xin lỗi, không tìm thấy thông tin phù hợp. Vui lòng kiểm tra lại từ khóa!", "text", None
+        best_match_text = st.session_state.question_texts[best_index]
+        best_match = st.session_state.question_data_map[best_match_text]
 
-    best_score = np.max(cosine_scores)
-    best_index = np.argmax(cosine_scores)
+    # Xử lý best_match
+    if "images" in best_match and isinstance(best_match["images"], str):
+        best_match["images"] = [best_match["images"]]
 
-    best_match_text = st.session_state.question_texts[best_index]
-    best_match = st.session_state.question_data_map[best_match_text]
+    has_images = "images" in best_match and best_match["images"]
+    has_video = "video_url" in best_match and best_match["video_url"]
 
-    # Ngưỡng độ tương đồng được điều chỉnh cho cosine similarity
-    if best_score >= 0.5:  # Tăng ngưỡng để giảm nhầm lẫn
-        if "images" in best_match and isinstance(best_match["images"], str):
-            best_match["images"] = [best_match["images"]]
+    answer_text = best_match.get('answer', "Không có câu trả lời.")
 
-        has_images = "images" in best_match and best_match["images"]
-        has_video = "video_url" in best_match and best_match["video_url"]
-
-        if has_images and has_video:
-            images = best_match.get('images', [])
-            captions = best_match.get('captions', [])
-            video_url = best_match["video_url"]
-            return best_match.get('answer', "Đây là nội dung bạn yêu cầu."), "multimedia", (images, captions, video_url)
-        elif has_video:
-            return best_match.get('answer', "Đây là video bạn yêu cầu."), "video", best_match["video_url"]
-        elif has_images:
-            images = best_match.get('images', [])
-            captions = best_match.get('captions', [])
-            valid_images = [img for img in images if isinstance(img, str) and os.path.exists(img) and img.strip() != ""]
-            if valid_images and captions is not None:
-                valid_captions = captions[:len(valid_images)] if len(captions) >= len(valid_images) else captions + [
-                    f"Ảnh {i + 1}" for i in range(len(valid_images) - len(captions))]
-            else:
-                valid_captions = []  # Gán giá trị mặc định nếu có lỗi
-            return best_match.get('answer', "Không có câu trả lời."), "image", (valid_images, valid_captions)
+    if has_images and has_video:
+        images = best_match.get('images', [])
+        captions = best_match.get('captions', [])
+        video_url = best_match["video_url"]
+        return answer_text, "multimedia", (images, captions, video_url)
+    elif has_video:
+        return answer_text, "video", best_match["video_url"]
+    elif has_images:
+        images = best_match.get('images', [])
+        captions = best_match.get('captions', [])
+        valid_images = [img for img in images if isinstance(img, str) and os.path.exists(img) and img.strip() != ""]
+        if valid_images and captions is not None:
+            valid_captions = captions[:len(valid_images)] if len(captions) >= len(valid_images) else captions + [
+                f"Ảnh {i + 1}" for i in range(len(valid_images) - len(captions))]
         else:
-            return best_match.get('answer', "Không có câu trả lời."), "text", None
-
-    return "Xin lỗi, không tìm thấy thông tin phù hợp. Vui lòng kiểm tra lại từ khóa!", "text", None
+            valid_captions = []
+        return answer_text, "image", (valid_images, valid_captions)
+    else:
+        return answer_text, "text", None
 
 # --- Giao diện Streamlit ---
 def main():
