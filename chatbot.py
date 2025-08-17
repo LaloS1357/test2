@@ -97,7 +97,7 @@ def find_answer_and_media(question):
         cosine_scores = cosine_similarity(query_embedding, st.session_state.question_embeddings)[0]
         best_score = np.max(cosine_scores)
         best_index = np.argmax(cosine_scores)
-        if best_score < 0.5:
+        if best_score < 0.6:
             return "Xin lỗi, không tìm thấy thông tin phù hợp. Vui lòng kiểm tra lại từ khóa!", "text", None
         best_match_text = st.session_state.question_texts[best_index]
         best_match = st.session_state.question_data_map[best_match_text]
