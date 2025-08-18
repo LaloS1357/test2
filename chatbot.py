@@ -9,7 +9,20 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import torch
-from pyvi import ViTokenizer, ViUtils
+from pyvi import ViTokenizer
+
+# Hàm loại bỏ từ dừng tiếng Việt
+def remove_vietnamese_stopwords(tokenized_text):
+    # Danh sách từ dừng tiếng Việt (có thể mở rộng)
+    stopwords = [
+        'là', 'của', 'và', 'có', 'trong', 'được', 'cho', 'với', 'tại', 'từ',
+        'bởi', 'để', 'như', 'thì', 'mà', 'này', 'kia', 'đó', 'nào', 'cái',
+        'những', 'một', 'các', 'đã', 'lại', 'còn', 'nếu', 'vì', 'do', 'bị'
+    ]
+    # Tách tokenized_text thành danh sách từ (nếu chưa tách)
+    tokens = tokenized_text.split() if isinstance(tokenized_text, str) else tokenized_text
+    # Loại bỏ từ dừng
+    return [token for token in tokens if token not in stopwords]
 
 # --- Cấu hình và tải dữ liệu ---
 # Xác định thiết bị
@@ -60,9 +73,9 @@ if model and 'question_embeddings' not in st.session_state:
             if not isinstance(q, str) or not q.strip():
                 print(f"Warning: Skipping invalid question: {q}")
                 continue
-            # Tokenize câu hỏi và loại bỏ stop words
+            # Tokenize câu hỏi và loại bỏ từ dừng
             tokenized_q = ViTokenizer.tokenize(q.lower())
-            clean_q = ' '.join(ViUtils.remove_stopwords(tokenized_q)) if ViUtils.remove_stopwords(tokenized_q) else tokenized_q
+            clean_q = ' '.join(remove_vietnamese_stopwords(tokenized_q)) if remove_vietnamese_stopwords(tokenized_q) else tokenized_q
             st.session_state.question_texts.append(clean_q)
             st.session_state.question_data_map[clean_q] = item
 
@@ -84,9 +97,9 @@ def find_answer_and_media(question):
     # Chuẩn hóa query: loại bỏ các cụm từ như "về", "tôi muốn biết về", "giới thiệu về", v.v.
     question = re.sub(r'(tôi muốn biết|tìm hiểu|giới thiệu|thông tin|hỏi|biết)\s*(về)?\s*', '', question).strip()
 
-    # Tokenize câu hỏi và loại bỏ stop words
+    # Tokenize câu hỏi và loại bỏ từ dừng
     tokenized_question = ViTokenizer.tokenize(question)
-    clean_question = ' '.join(ViUtils.remove_stopwords(tokenized_question)) if ViUtils.remove_stopwords(tokenized_question) else tokenized_question
+    clean_question = ' '.join(remove_vietnamese_stopwords(tokenized_question)) if remove_vietnamese_stopwords(tokenized_question) else tokenized_question
 
     # Bước 1: Kiểm tra khớp từ khóa chính xác trong question
     best_match = None
@@ -95,7 +108,7 @@ def find_answer_and_media(question):
         for q in questions:
             if isinstance(q, str):
                 tokenized_q = ViTokenizer.tokenize(q.lower())
-                clean_q = ' '.join(ViUtils.remove_stopwords(tokenized_q)) if ViUtils.remove_stopwords(tokenized_q) else tokenized_q
+                clean_q = ' '.join(remove_vietnamese_stopwords(tokenized_q)) if remove_vietnamese_stopwords(tokenized_q) else tokenized_q
                 if clean_question in clean_q or tokenized_question in tokenized_q:
                     best_match = item
                     break
