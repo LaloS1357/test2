@@ -9,6 +9,7 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import torch
+from pyvi import ViTokenizer, ViUtils
 
 # --- Cấu hình và tải dữ liệu ---
 # Xác định thiết bị
@@ -59,11 +60,14 @@ if model and 'question_embeddings' not in st.session_state:
             if not isinstance(q, str) or not q.strip():
                 print(f"Warning: Skipping invalid question: {q}")
                 continue
-            st.session_state.question_texts.append(q)
-            st.session_state.question_data_map[q] = item
+            # Tokenize câu hỏi và loại bỏ stop words
+            tokenized_q = ViTokenizer.tokenize(q.lower())
+            clean_q = ' '.join(ViUtils.remove_stopwords(tokenized_q)) if ViUtils.remove_stopwords(tokenized_q) else tokenized_q
+            st.session_state.question_texts.append(clean_q)
+            st.session_state.question_data_map[clean_q] = item
 
     if st.session_state.question_texts:
-        # Sử dụng phương thức encode() của SentenceTransformer để tạo embedding
+        # Encode câu hỏi đã tokenize
         st.session_state.question_embeddings = model.encode(st.session_state.question_texts)
     else:
         st.session_state.question_embeddings = None
@@ -80,20 +84,27 @@ def find_answer_and_media(question):
     # Chuẩn hóa query: loại bỏ các cụm từ như "về", "tôi muốn biết về", "giới thiệu về", v.v.
     question = re.sub(r'(tôi muốn biết|tìm hiểu|giới thiệu|thông tin|hỏi|biết)\s*(về)?\s*', '', question).strip()
 
+    # Tokenize câu hỏi và loại bỏ stop words
+    tokenized_question = ViTokenizer.tokenize(question)
+    clean_question = ' '.join(ViUtils.remove_stopwords(tokenized_question)) if ViUtils.remove_stopwords(tokenized_question) else tokenized_question
+
     # Bước 1: Kiểm tra khớp từ khóa chính xác trong question
     best_match = None
     for item in admissions_data['questions']:
         questions = item['question'] if isinstance(item['question'], list) else [item['question']]
         for q in questions:
-            if isinstance(q, str) and question in q.lower():
-                best_match = item
-                break
+            if isinstance(q, str):
+                tokenized_q = ViTokenizer.tokenize(q.lower())
+                clean_q = ' '.join(ViUtils.remove_stopwords(tokenized_q)) if ViUtils.remove_stopwords(tokenized_q) else tokenized_q
+                if clean_question in clean_q or tokenized_question in tokenized_q:
+                    best_match = item
+                    break
         if best_match:
             break
 
     # Bước 2: Nếu không có khớp chính xác, dùng embedding để tìm
     if best_match is None:
-        query_embedding = model.encode([question])
+        query_embedding = model.encode([clean_question])
         cosine_scores = cosine_similarity(query_embedding, st.session_state.question_embeddings)[0]
         best_score = np.max(cosine_scores)
         best_index = np.argmax(cosine_scores)
