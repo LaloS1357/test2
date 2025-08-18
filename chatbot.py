@@ -10,6 +10,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import torch
 from pyvi import ViTokenizer
+import unicodedata  # Thêm import để normalize
 
 # Hàm loại bỏ từ dừng tiếng Việt
 def remove_vietnamese_stopwords(tokenized_text):
@@ -23,6 +24,13 @@ def remove_vietnamese_stopwords(tokenized_text):
     tokens = tokenized_text.split() if isinstance(tokenized_text, str) else tokenized_text
     # Loại bỏ từ dừng
     return [token for token in tokens if token not in stopwords]
+
+# Hàm normalize: chuyển không dấu, lowercase, loại bỏ dấu thừa
+def normalize_text(text):
+    text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('utf-8')
+    text = text.lower().strip()
+    text = re.sub(r'\s+', ' ', text)  # Loại bỏ khoảng trắng thừa
+    return text
 
 # --- Cấu hình và tải dữ liệu ---
 # Xác định thiết bị
@@ -73,8 +81,9 @@ if model and 'question_embeddings' not in st.session_state:
             if not isinstance(q, str) or not q.strip():
                 print(f"Warning: Skipping invalid question: {q}")
                 continue
-            # Tokenize câu hỏi và loại bỏ từ dừng
-            tokenized_q = ViTokenizer.tokenize(q.lower())
+            # Normalize trước khi tokenize
+            norm_q = normalize_text(q)
+            tokenized_q = ViTokenizer.tokenize(norm_q)
             clean_q = ' '.join(remove_vietnamese_stopwords(tokenized_q)) if remove_vietnamese_stopwords(tokenized_q) else tokenized_q
             st.session_state.question_texts.append(clean_q)
             st.session_state.question_data_map[clean_q] = item
@@ -97,8 +106,9 @@ def find_answer_and_media(question):
     # Chuẩn hóa query: loại bỏ các cụm từ như "về", "tôi muốn biết về", "giới thiệu về", v.v.
     question = re.sub(r'(tôi muốn biết|tìm hiểu|giới thiệu|thông tin|hỏi|biết)\s*(về)?\s*', '', question).strip()
 
-    # Tokenize câu hỏi và loại bỏ từ dừng
-    tokenized_question = ViTokenizer.tokenize(question)
+    # Normalize query trước khi tokenize
+    norm_question = normalize_text(question)
+    tokenized_question = ViTokenizer.tokenize(norm_question)
     clean_question = ' '.join(remove_vietnamese_stopwords(tokenized_question)) if remove_vietnamese_stopwords(tokenized_question) else tokenized_question
 
     # Bước 1: Kiểm tra khớp từ khóa chính xác trong question
@@ -107,7 +117,8 @@ def find_answer_and_media(question):
         questions = item['question'] if isinstance(item['question'], list) else [item['question']]
         for q in questions:
             if isinstance(q, str):
-                tokenized_q = ViTokenizer.tokenize(q.lower())
+                norm_q = normalize_text(q)  # Normalize q để so sánh
+                tokenized_q = ViTokenizer.tokenize(norm_q)
                 clean_q = ' '.join(remove_vietnamese_stopwords(tokenized_q)) if remove_vietnamese_stopwords(tokenized_q) else tokenized_q
                 if clean_question in clean_q or tokenized_question in tokenized_q:
                     best_match = item
