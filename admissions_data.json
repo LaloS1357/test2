@@ -25,7 +25,7 @@
       "captions": null
     },
     {
-      "question": ["căn tin như thế nào", "đồ ăn có mắc không", "nước có mắc không", "thông tin về căn tin trường", "căn tin"],
+      "question": ["căn tin như thế nào", "đồ ăn có mắc không", "nước có mắc không", "thông tin về căn tin trường", "căn tin trường","căn tin","đồ ăn và nước uống ở căn tin"],
       "answer": "Căn tin có máy lạnh, giá cả đồ ăn phù với túi tiền học sinh",
       "images": null,
       "captions": null
@@ -43,7 +43,7 @@
       "captions": ["Thầy Nguyễn Hùng Khương - Người thắp sáng tầm nhìn chiến lược -Hiệu trưởng từ năm 2023\nVới vai trò là Bí thư chi bộ và Hiệu trưởng nhà trường, thầy Nguyễn Hùng Khương đã góp phần quan trọng trong việc định hình phong cách giáo dục hiện đại, gắn kết truyền thống với sự đổi mới. Thầy luôn là một người lãnh đạo vui vẻ, thân thiện nhưng quyết đoán, tận tâm và sáng tạo trong việc xây dựng những chính sách giáo dục toàn diện. Nhờ có sự dẫn dắt của thầy, trường THPT Ten Lơ Man không chỉ là nơi đào tạo những thế hệ học sinh tài năng, mà còn là một ngôi nhà chung đầy yêu thương và khích lệ sáng tạo.\n", "Cô Phan Thị Phương Trang - Phó hiệu trưởng - Hiện thân của sự dẫn dắt và tận tâm\nGiữ vai trò Phó Bí thư chi bộ và Phó Hiệu trưởng nhà trường, cô Phan Thị Phương Trang là một nhân tố lãnh đạo tận tâm và luôn sát cánh cùng thầy trò trong nhiều hoạt động, chăm lo, bảo quản các trang thiết bị, cơ sở vật chất phục vụ các hoạt động dạy học. Cô chú trọng việc kết nối giữa các thành viên trong nhà trường, góp phần tạo nên sự gắn kết chặt chẽ giữa giáo viên và học sinh. Bên cạnh đó cô còn phụ công tác tổ chức bán trú, quan tâm các hoạt động ngoại khóa, các phong trào thi đua đã mang lại những kỷ niệm đẹp và ấn tượng cho nhiều thế hệ học sinh. \n", "Thầy Trần Hải Bình - Phó hiệu trưởng - Trái tim của chân chính nghiêm minh và kỷ luật\nVới vai trò Phó Hiệu trưởng phụ trách chuyên môn và kỷ luật học sinh, thầy đã mang đến những đóng góp thiết thực trong việc duy trì nề nếp kỷ cương và kỷ luật nghiêm minh của nhà trường. Thầy luôn đặt lợi ích của học sinh lên hàng đầu, đề cao tinh thần giáo dục nhân cách song hành cùng việc rèn luyện tri thức. Nhờ vào những nguyên tắc quản lý kỷ luật hiệu quả của thầy, nhà trường luôn đảm bảo môi trường học tập an toàn, kỷ cương và lành mạnh.\nTiếp nối truyền thống của Ban lãnh đạo nhà trường suốt 75 năm qua, Ban lãnh đạo đương nhiệm tiếp tục giữ tinh thần đoàn kết, thống nhất, năng động, sáng tạo; đặt lợi ích tập thể lên trên lợi ích cá nhân với phương châm tất cả vì học sinh thân yêu, vì sự phát triển bền vững của nhà trường. \n", "Thầy Nguyễn Hùng Khương – Hiệu trưởng phát biểu trong Lễ Khai giảng năm học 2024 - 2025", "Hình Ban Lãnh đạo nhà trường năm học 2024-2025 (Từ phải qua: Thầy Nguyễn Hùng Khương – Hiệu trưởng; Thầy Trần Hải Bình – Phó Hiệu trưởng; Cô Phan Thị Phương Trang – Phó Hiệu trưởng)"]
     },
     {
-      "question": ["điểm chuẩn 4 năm gần nhất", "điểm chuẩn bao nhiêu", "điểm chuẩn là bao nhiêu", "điểm năm nay"],
+      "question": ["điểm chuẩn 4 năm gần nhất", "điểm chuẩn bao nhiêu", "điểm chuẩn là bao nhiêu", "điểm chuẩn năm nay","điểm chuẩn của trường"],
       "answer": "Điểm chuẩn qua các năm: 2022 là 17.75, 2023 là 18.25, 2024 là 18.25, và 2025 là 18",
       "images": null,
       "captions": null
@@ -55,7 +55,7 @@
       "captions": null
     },
     {
-      "question": ["liên hệ trường như thế nào", "làm sao để liên hệ với trường", "thông tin liên hệ", "email", "thông tin chi tiết","cho tôi thông tin liên hệ"],
+      "question": ["liên hệ trường như thế nào", "làm sao để liên hệ với trường", "thông tin liên hệ", "email","cho tôi thông tin liên hệ","thông tin liên hệ của nhà trường"],
       "answer": "Trường Trung học phổ thông Tên Lơ Man nằm tại số 8 Trần Hưng Đạo, phường Bến Thành, TP. Hồ Chí Minh. Điện thoại liên hệ: (028)38299702, (028)38218020. Email: c3tenloman.tphochiminh@moet.edu.vn. Ban giám hiệu nhà trường gồm: - Thầy Nguyễn Hùng Khương, chức vụ: Hiệu trưởng, số điện thoại: 0913103045. - Cô Phan Thị Phương Trang, chức vụ: Phó hiệu trưởng, số điện thoại: 0919655589. - Thầy Trần Hải Bình, chức vụ: Phó hiệu trưởng, số điện thoại: 0929289858",
       "images": null,
       "captions": null
@@ -67,8 +67,8 @@
       "captions": null
     },
     {
-      "question": ["phòng học", "lớp học", "phòng học như thế nào"],
-      "answer": "100% phòng học, thư viện đều được trang bị 2 cái máy lạnh, 1 cái máy chiếu, micro",
+      "question": ["phòng học", "lớp học", "phòng học và lớp học như thế nào","phòng học và lớp học của trường"],
+      "answer": "100% phòng học, thư viện đều được trang bị 2 cái máy lạnh, 1 cái máy chiếu, micro. Phòng học đủ ánh sáng, không gian lớp học rộng rãi, đạt chuẩn.",
       "images": null,
       "captions": null
     },
@@ -79,7 +79,7 @@
       "captions": null
     },
     {
-      "question": ["khái quát", "sơ lược","khái quát về trường","sơ lược về trường","cho tôi thông tin sơ lược/khái quát về trường"],
+      "question": ["khái quát", "sơ lược","khái quát về trường","sơ lược về trường","cho tôi thông tin sơ lược và khái quát về trường"],
       "answer": "1.1. VỀ VIỆC THÀNH LẬP Trường THPT Ten Lơ Man được thành lập theo Quyết định số 2334/QĐ-UBND ngày 24 tháng 5 năm 2006 của UBND thành phố Hồ Chí Minh. Hiện trường tọa lạc tại số 08, đường Trần Hưng Đạo, phường Phạm Ngũ Lão, Quận 1 Thành phố Hồ Chí Minh. Hiện tại trường có 39 lớp với 1711 học sinh. Tổng số cán bộ giáo viên, nhân viên của trường (tính đến thời điểm hiện tại) là 87. Trong đó cán bộ quản lý 03; giáo viên 71, nhân viên 04. Trường THPT Ten Lơ Man được thành lập theo Quyết định số 2334/QĐ-UBND ngày 24 tháng 5 năm 2006 của UBND thành phố Hồ Chí Minh, là cơ sở giáo dục phổ thông của hệ thống giáo dục quốc dân, là đơn vị sự nghiệp công lập trực thuộc Sở Giáo dục và Đào tạo Thành phố Hồ Chí Minh; thực hiện chức năng, nhiệm vụ, quyền hạn theo Điều lệ Trường trung học cơ sở, THPT và trường phổ thông có nhiều cấp học của Bộ Gáo dục và Đào tạo và các quy định pháp luật có liên quan. Trường có tư cách pháp nhân, có tài khoản và con dấu riêng hoạt động theo quy định của pháp luật.\n1.2. VỀ VỊ TRÍ Trường THPT Ten Lơ Man là cơ sở giáo dục phổ thông của hệ thống giáo dục quốc dân, là đơn vị sự nghiệp công lập trực thuộc Sở Giáo dục và Đào tạo Thành phố Hồ Chí Minh. Trường thực hiện chức năng, nhiệm vụ, quyền hạn theo Điều lệ Trường trung học cơ sở, trung học phổ thông và trường phổ thông có nhiều cấp học của Bộ Giáo dục và Đào tạo và các quy định Pháp luật có liên quan. Trường có tư cách pháp nhân, có tài khoản và con dấu riêng hoạt động theo quy định của Pháp luật.\n2. VỀ NHIỆM VỤ VÀ QUYỀN HẠN CỦA TRƯỜNG THPT TEN LƠ MAN Trường THPT Ten Lơ Man thực hiện nhiệm vụ và quyền hạn sau đây: - Xây dựng kế hoạch chiến lược phát triển nhà trường, gắn với điều kiện kinh tế - xã hội của địa phương; xác định tầm nhìn, sứ mệnh, các giá trị cốt lõi về giáo dục, văn hóa, lịch sử và truyền thống của nhà trường; - Xây dựng và tổ chức thực hiện kế hoạch giáo dục của nhà trường, theo chương trình giáo dục phổ thông do Bộ trưởng Bộ Giáo dục và Đào tạo ban hành, cùng Sở Giáo dục và Đào tạo và nhà trường xây dựng. Phối hợp với gia đình học sinh, tổ chức và cá nhân trong việc tổ chức các hoạt động giáo dục.",
       "images": null,
       "captions": null
@@ -175,7 +175,7 @@
       "captions": null
     },
     {
-      "question": ["ưu điểm", "hạn chế", "ưu điểm và hạn chế","một số ưu điểm/hạn chế của trường"],
+      "question": ["ưu điểm", "hạn chế", "ưu điểm và hạn chế","một số ưu điểm và hạn chế của trường"],
       "answer": "Ưu điểm:\n\n- 100 % phòng học đều có máy lạnh, máy chiếu, micro.\n\n- Vị trí địa lý dễ tìm, giao thông đến trường thuận tiện (xe bus, tàu điện ngầm, …) \n\n - Tiện ích xung quanh trường (công viên có nhiều cây xanh, ăn uống, vui chơi …)\n\nHạn chế:\n\n- Phòng học không cố định.\n\n- Khuôn viên trường hơi nhỏ.",
       "images": null,
       "captions": null
@@ -195,12 +195,6 @@
     {
       "question": ["loại hình trường", "trường gì", "trường ten lơ man thuộc loại hình trường gì"],
       "answer": "Trường THPT Ten Lơ Man là cơ sở giáo dục phổ thông của hệ thống giáo dục quốc dân, là đơn vị sự nghiệp công lập trực thuộc Sở Giáo dục và Đào tạo Thành phố Hồ Chí Minh. \nTrường thực hiện chức năng, nhiệm vụ, quyền hạn theo Điều lệ Trường trung học cơ sở, trung học phổ thông và trường phổ thông có nhiều cấp học của Bộ Giáo dục và Đào tạo và các quy định Pháp luật có liên quan. Trường có tư cách pháp nhân, có tài khoản và con dấu riêng hoạt động theo quy định của Pháp luật.\nTrường THPT Ten Lơ Man thực hiện nhiệm vụ và quyền hạn sau đây: \n- Xây dựng kế hoạch chiến lược phát triển nhà trường, gắn với điều kiện kinh tế - xã hội của địa phương; xác định tầm nhìn, sứ mệnh, các giá trị cốt lõi về giáo dục, văn hóa, lịch sử và truyền thống của nhà trường; \n- Xây dựng và tổ chức thực hiện kế hoạch giáo dục của nhà trường, theo chương trình giáo dục phổ thông do Bộ trưởng Bộ Giáo dục và Đào tạo ban hành, cùng Sở Giáo dục và Đào tạo và nhà trường xây dựng. Phối hợp với gia đình học sinh, tổ chức và cá nhân trong việc tổ chức các hoạt động giáo dục\n",
-      "images": null,
-      "captions": null
-    },
-    {
-      "question": ["ánh sáng", "không gian lớp", "không gian lớp học như thế nào"],
-      "answer": "Phòng học đủ ánh sáng, không gian lớp học rộng rãi, đạt chuẩn.",
       "images": null,
       "captions": null
     },
