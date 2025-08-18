@@ -435,7 +435,7 @@
     },
     {
       "question": ["có thái độ  thiếu chuẩn mực với bạn bè","giấu đồ của bạn","đồng phạm hành vi xấu của bạn","mang hột quẹt","mang VHP không cho phép"],
-      "answer": "học sinh sẽ bị tr 3 điểm hạnh kiểm",
+      "answer": "học sinh sẽ bị trừ 3 điểm hạnh kiểm",
       "images": null,
       "captions": null
     },
@@ -483,7 +483,7 @@
     },
     {
       "question": ["ép buộc bạn thực hiện hành vi xấu","không tôn trọng thầy cô","mang và đánh bài trong trường","đổ lỗi cho bạn","giỡn vô văn hoá","lấy cắp","phi tang tang vật","xúi bạn đánh nhau"],
-      "answer": "học sính sẽ bị trừ 10 điểm hạnh kiểm",
+      "answer": "học sinh sẽ bị trừ 10 điểm hạnh kiểm",
       "images": null,
       "captions": null
     },
@@ -500,7 +500,7 @@
       "captions": null
     },
     {
-      "question": ["mang, sử dụng đồ uống có cồn trong trường","đem đồ uống có cồn vào trường"],
+      "question": ["mang và sử dụng đồ uống có cồn trong trường","đem đồ uống có cồn vào trường"],
       "answer": "học sinh mang hoặc sử dụng đồ uống có cồn trong trường sẽ bị trừ 12 điểm hạnh kiểm",
       "images": null,
       "captions": null
@@ -513,7 +513,7 @@
     },
     {
       "question": ["mang, sử dụng chất gây nghiện","sử dụng chất gây nghiện"],
-      "answer": "học sinh mang tinh dầu thuốc lá điện tử hay cac chất gây nghiện khác sẽ bị trừ 12 điểm hạnh kiểm",
+      "answer": "học sinh mang tinh dầu thuốc lá điện tử hay các chất gây nghiện khác sẽ bị trừ 12 điểm hạnh kiểm",
       "images": null,
       "captions": null
     },
