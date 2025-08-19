@@ -1,0 +1,5 @@
+services:
+  tenlomanchatbot:
+    build: .
+    ports:
+      - "88:8080"
