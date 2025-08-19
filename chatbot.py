@@ -13,17 +13,14 @@ from pyvi import ViTokenizer
 import unicodedata  # Thêm import để normalize
 from underthesea import word_tokenize
 
-# Hàm loại bỏ từ dừng tiếng Việt
+# Hàm loại bỏ từ dừng tiếng Việt (loại bỏ "của" để giữ ngữ cảnh)
 def remove_vietnamese_stopwords(tokenized_text):
-    # Danh sách từ dừng tiếng Việt (có thể mở rộng)
     stopwords = [
-        'là', 'của', 'và', 'có', 'trong', 'được', 'cho', 'với', 'tại', 'từ',
+        'là', 'và', 'có', 'trong', 'được', 'cho', 'với', 'tại', 'từ',
         'bởi', 'để', 'như', 'thì', 'mà', 'này', 'kia', 'đó', 'nào', 'cái',
         'những', 'một', 'các', 'đã', 'lại', 'còn', 'nếu', 'vì', 'do', 'bị'
     ]
-    # Tách tokenized_text thành danh sách từ (nếu chưa tách)
     tokens = tokenized_text.split() if isinstance(tokenized_text, str) else tokenized_text
-    # Loại bỏ từ dừng
     return [token for token in tokens if token not in stopwords]
 
 # Hàm normalize: chuyển không dấu, lowercase, loại bỏ dấu thừa
@@ -35,21 +32,16 @@ def normalize_text(text):
 
 # Hàm tách từ dính (như "hocphi" thành "học phí") sử dụng underthesea
 def split_sticky_words(text):
-    # Chuyển về không dấu và lowercase trước khi tách
     text = text.lower().replace(' ', '')
-    # Sử dụng underthesea để tách từ
     tokenized = word_tokenize(text, format="text")
     return tokenized
 
 # --- Cấu hình và tải dữ liệu ---
-# Xác định thiết bị
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-# Tải dữ liệu tuyển sinh
 try:
     with open(os.path.join(os.path.dirname(__file__), 'admissions_data.json'), 'r', encoding='utf-8') as f:
         admissions_data = json.load(f)
-        # Validate JSON structure
         if not isinstance(admissions_data, dict) or 'questions' not in admissions_data:
             raise ValueError("admissions_data.json must be a dictionary with a 'questions' key")
         if not isinstance(admissions_data['questions'], list):
@@ -64,20 +56,16 @@ except Exception as e:
     st.error(f"Lỗi khi tải admissions_data.json: {e}")
     admissions_data = {"questions": []}
 
-# --- Tải mô hình SentenceTransformer ---
 try:
     @st.cache_resource
     def load_sentence_transformer_model():
-        # Sử dụng mô hình dangvantuan/vietnamese-embedding
         model = SentenceTransformer('dangvantuan/vietnamese-embedding', device=device)
         return model
-
     model = load_sentence_transformer_model()
 except Exception as e:
     st.error(f"Lỗi khi tải mô hình SentenceTransformer: {e}")
     model = None
 
-# Tạo embedding cho tất cả các câu hỏi trong dữ liệu
 if model and 'question_embeddings' not in st.session_state:
     st.session_state.question_texts = []
     st.session_state.question_data_map = {}
@@ -90,16 +78,13 @@ if model and 'question_embeddings' not in st.session_state:
             if not isinstance(q, str) or not q.strip():
                 print(f"Warning: Skipping invalid question: {q}")
                 continue
-            # Normalize và tách từ dính trước khi tokenize
             norm_q = normalize_text(q)
             split_q = split_sticky_words(norm_q)
             tokenized_q = ViTokenizer.tokenize(split_q)
             clean_q = ' '.join(remove_vietnamese_stopwords(tokenized_q)) if remove_vietnamese_stopwords(tokenized_q) else tokenized_q
             st.session_state.question_texts.append(clean_q)
             st.session_state.question_data_map[clean_q] = item
-
     if st.session_state.question_texts:
-        # Encode câu hỏi đã tokenize
         st.session_state.question_embeddings = model.encode(st.session_state.question_texts)
     else:
         st.session_state.question_embeddings = None
@@ -113,22 +98,30 @@ def find_answer_and_media(question):
     if not isinstance(question, str):
         question = str(question)
     question = re.sub(r'\s+', ' ', question.strip().lower())
-    # Chuẩn hóa query: loại bỏ các cụm từ như "về", "tôi muốn biết về", "giới thiệu về", v.v.
-    question = re.sub(r'(tôi muốn biết|tìm hiểu|giới thiệu|thông tin|hỏi|biết)\s*(về)?\s*', '', question).strip()
+    if any(keyword in question for keyword in ['thời tiết', 'tin tức', 'giá cả', 'bóng đá']):
+        return "Xin lỗi, tôi chỉ hỗ trợ thông tin về tuyển sinh. Vui lòng hỏi về học phí, học bổng, hoặc thông tin trường!", "text", None
 
-    # Normalize và tách từ dính trước khi tokenize
+    question = re.sub(r'(tôi muốn biết|tìm hiểu|giới thiệu|thông tin|hỏi|biết)\s*(về)?\s*', '', question).strip()
     norm_question = normalize_text(question)
+
+    # Loại bỏ tên trường bất kỳ vị trí nào trong câu, bao gồm "ersnt thalmann" (sai chính tả)
+    school_patterns = r'\b(truong\s+)?thpt\s+ten\s+lo\s+man\b|\btrung\s+hoc\s+pho\s+thong\s+ten\s+lo\s+man\b|\bthpt\s+ernst\s+thalmann\b|\bten\s+lo\s+man\b|\bernst\s+thalmann\b|\bersnt\s+thalmann\b|\bthpt\s+ten\s+lo\s+man\b|\btrung\s+hoc\s+pho\s+thong\s+ernst\s+thalmann\b'
+    norm_question = re.sub(school_patterns, '', norm_question, flags=re.IGNORECASE).strip()
+    if not norm_question:
+        return "Xin lỗi, câu hỏi của bạn quá chung chung. Vui lòng cung cấp thêm chi tiết!", "text", None
+
+    # Nếu câu hỏi vẫn chứa ý nghĩa, tiếp tục xử lý
     split_question = split_sticky_words(norm_question)
     tokenized_question = ViTokenizer.tokenize(split_question)
     clean_question = ' '.join(remove_vietnamese_stopwords(tokenized_question)) if remove_vietnamese_stopwords(tokenized_question) else tokenized_question
+    print(f"Cleaned query: {clean_question}")
 
-    # Bước 1: Kiểm tra khớp từ khóa chính xác trong question
     best_match = None
     for item in admissions_data['questions']:
         questions = item['question'] if isinstance(item['question'], list) else [item['question']]
         for q in questions:
             if isinstance(q, str):
-                norm_q = normalize_text(q)  # Normalize q để so sánh
+                norm_q = normalize_text(q)
                 split_q = split_sticky_words(norm_q)
                 tokenized_q = ViTokenizer.tokenize(split_q)
                 clean_q = ' '.join(remove_vietnamese_stopwords(tokenized_q)) if remove_vietnamese_stopwords(tokenized_q) else tokenized_q
@@ -138,10 +131,10 @@ def find_answer_and_media(question):
         if best_match:
             break
 
-    # Bước 2: Nếu không có khớp chính xác, dùng embedding để tìm
     if best_match is None:
         query_embedding = model.encode([clean_question])
         cosine_scores = cosine_similarity(query_embedding, st.session_state.question_embeddings)[0]
+        print(f"Cosine scores: {cosine_scores}")
         best_score = np.max(cosine_scores)
         best_index = np.argmax(cosine_scores)
         if best_score < 0.7:
@@ -149,7 +142,6 @@ def find_answer_and_media(question):
         best_match_text = st.session_state.question_texts[best_index]
         best_match = st.session_state.question_data_map[best_match_text]
 
-    # Xử lý best_match
     if "images" in best_match and isinstance(best_match["images"], str):
         best_match["images"] = [best_match["images"]]
 
@@ -194,15 +186,14 @@ def main():
                 st.video(message["video"])
             if "images" in message:
                 valid_images_paths = [img_path for img_path in message["images"] if
-                                      isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
+                                     isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
                 if valid_images_paths:
                     num_cols = min(len(valid_images_paths), 3)
                     cols = st.columns(num_cols)
-                    # Đảm bảo caption đầy đủ cho từng ảnh, kể cả khi chỉ có 1 ảnh
                     captions = message.get("captions", [])
                     if not isinstance(captions, list):
                         captions = [captions] if captions else [f"Ảnh {i + 1}" for i in range(len(valid_images_paths))]
-                    captions = captions[:len(valid_images_paths)]  # Đảm bảo số lượng caption khớp với số ảnh
+                    captions = captions[:len(valid_images_paths)]
                     for i, img_path in enumerate(valid_images_paths):
                         with cols[i % num_cols]:
                             st.image(img_path,
@@ -222,23 +213,19 @@ def main():
                 st.markdown(response)
                 if images:
                     valid_images_paths = [img_path for img_path in images if
-                                          isinstance(img_path, str) and os.path.exists(
-                                              img_path) and img_path.strip() != ""]
+                                         isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
                     if valid_images_paths:
                         num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
-                        # Đảm bảo caption đầy đủ cho từng ảnh
                         if not isinstance(captions, list):
-                            captions = [captions] if captions else [f"Ảnh {i + 1}" for i in
-                                                                    range(len(valid_images_paths))]
-                        captions = captions[:len(valid_images_paths)]  # Cắt hoặc bổ sung để khớp số lượng ảnh
+                            captions = [captions] if captions else [f"Ảnh {i + 1}" for i in range(len(valid_images_paths))]
+                        captions = captions[:len(valid_images_paths)]
                         for i, img_path in enumerate(valid_images_paths):
                             with cols[i % num_cols]:
                                 st.image(img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
                                          use_container_width=True)
                 st.video(video_url)
-                st.session_state.messages.append(
-                    {"role": "assistant", "text": response, "images": images, "captions": captions, "video": video_url})
+                st.session_state.messages.append({"role": "assistant", "text": response, "images": images, "captions": captions, "video": video_url})
             elif media_type == "video":
                 st.markdown(response)
                 st.video(media_content)
@@ -248,22 +235,18 @@ def main():
                 images, captions = media_content
                 if images:
                     valid_images_paths = [img_path for img_path in images if
-                                          isinstance(img_path, str) and os.path.exists(
-                                              img_path) and img_path.strip() != ""]
+                                         isinstance(img_path, str) and os.path.exists(img_path) and img_path.strip() != ""]
                     if valid_images_paths:
                         num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
-                        # Đảm bảo caption đầy đủ cho từng ảnh, kể cả khi chỉ có 1 ảnh
                         if not isinstance(captions, list):
-                            captions = [captions] if captions else [f"Ảnh {i + 1}" for i in
-                                                                    range(len(valid_images_paths))]
-                        captions = captions[:len(valid_images_paths)]  # Đảm bảo số lượng caption khớp với số ảnh
+                            captions = [captions] if captions else [f"Ảnh {i + 1}" for i in range(len(valid_images_paths))]
+                        captions = captions[:len(valid_images_paths)]
                         for i, img_path in enumerate(valid_images_paths):
                             with cols[i % num_cols]:
                                 st.image(img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
                                          use_container_width=True)
-                st.session_state.messages.append(
-                    {"role": "assistant", "text": response, "images": images, "captions": captions})
+                st.session_state.messages.append({"role": "assistant", "text": response, "images": images, "captions": captions})
             else:
                 st.markdown(response)
                 st.session_state.messages.append({"role": "assistant", "text": response})
@@ -271,22 +254,13 @@ def main():
     col1, col2 = st.columns(2)
     with col1:
         if st.button("Giới thiệu về trường", key="suggested_question_button"):
-            # Trả lời hardcode và video cho nút "Giới thiệu về trường"
             hardcoded_response = "Tôi xin giới thiệu bạn video về trường."
             hardcoded_video_url = "https://www.youtube.com/watch?v=HzvZVAvBkto"
-
             st.session_state.messages.append({"role": "user", "text": "Giới thiệu về trường"})
-
             with st.chat_message("assistant"):
                 st.markdown(hardcoded_response)
                 st.video(hardcoded_video_url)
-
-            st.session_state.messages.append({
-                "role": "assistant",
-                "text": hardcoded_response,
-                "video": hardcoded_video_url
-            })
-
+            st.session_state.messages.append({"role": "assistant", "text": hardcoded_response, "video": hardcoded_video_url})
             st.rerun()
 
     with col2:
