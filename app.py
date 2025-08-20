@@ -4,7 +4,7 @@ import json
 import os
 import re
 import time
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
@@ -159,9 +159,14 @@ def find_answer_and_media(question):
 print(f'loading chatbot... END (elapsed time: {time.time()-t0:.2f} seconds)')  #endregion
 
 
-# Endpoint API
+# web
+@app.route('/')
+def         index():
+    return render_template('index.html')
+
+
 @app.route('/ask', methods=['POST'])
-def ask():
+def          ask():
     data = request.get_json()
     if not data or 'question' not in data:
         return jsonify({"error": "Vui lòng cung cấp câu hỏi trong JSON (key: 'question')"}), 400
