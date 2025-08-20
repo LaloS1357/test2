@@ -1,4 +1,4 @@
-#!/bin/bash
+                                #!/bin/bash
 cd ~/test2 || exit
 git pull
 docker-compose down
