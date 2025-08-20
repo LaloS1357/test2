@@ -3,6 +3,7 @@
 import json
 import os
 import re
+import time
 from flask import Flask, request, jsonify
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -13,6 +14,9 @@ import unicodedata
 from underthesea import word_tokenize
 
 app = Flask(__name__)
+
+print('loading chatbot... BEGIN')  #region
+t0 = time.time()
 
 # Hàm loại bỏ từ dừng tiếng Việt
 def remove_vietnamese_stopwords(tokenized_text):
@@ -152,6 +156,9 @@ def find_answer_and_media(question):
     else:
         return {"response": answer_text}, 200, "text"
 
+print(f'loading chatbot... END (elapsed time: {time.time()-t0:.2f} seconds)')  #endregion
+
+
 # Endpoint API
 @app.route('/ask', methods=['POST'])
 def ask():
@@ -169,6 +176,7 @@ def ask():
         "captions": response.get("captions", []),
         "video_url": response.get("video_url", None)
     }), status_code
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
