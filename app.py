@@ -15,8 +15,9 @@ from underthesea import word_tokenize
 
 app = Flask(__name__)
 
-print('loading chatbot... BEGIN')  #region
+print('loading chatbot... BEGIN')  # region
 t0 = time.time()
+
 
 # Hàm loại bỏ từ dừng tiếng Việt
 def remove_vietnamese_stopwords(tokenized_text):
@@ -28,6 +29,7 @@ def remove_vietnamese_stopwords(tokenized_text):
     tokens = tokenized_text.split() if isinstance(tokenized_text, str) else tokenized_text
     return [token for token in tokens if token not in stopwords]
 
+
 # Hàm normalize
 def normalize_text(text):
     text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('utf-8')
@@ -35,11 +37,13 @@ def normalize_text(text):
     text = re.sub(r'\s+', ' ', text)
     return text
 
+
 # Hàm tách từ dính
 def split_sticky_words(text):
     text = text.lower().replace(' ', '')
     tokenized = word_tokenize(text, format="text")
     return tokenized
+
 
 # Load data and model (global để tránh load lại mỗi request)
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -77,7 +81,8 @@ try:
             norm_q = normalize_text(q)
             split_q = split_sticky_words(norm_q)
             tokenized_q = ViTokenizer.tokenize(split_q)
-            clean_q = ' '.join(remove_vietnamese_stopwords(tokenized_q)) if remove_vietnamese_stopwords(tokenized_q) else tokenized_q
+            clean_q = ' '.join(remove_vietnamese_stopwords(tokenized_q)) if remove_vietnamese_stopwords(
+                tokenized_q) else tokenized_q
             question_texts.append(clean_q)
             question_data_map[clean_q] = item
     if question_texts:
@@ -89,6 +94,7 @@ except Exception as e:
     print(f"Lỗi khi tải mô hình SentenceTransformer: {e}")
     model = None
 
+
 # Hàm tìm câu trả lời, hình ảnh và video
 def find_answer_and_media(question):
     global model, question_embeddings
@@ -98,12 +104,28 @@ def find_answer_and_media(question):
     if not isinstance(question, str):
         question = str(question)
     question = re.sub(r'\s+', ' ', question.strip().lower())
+
+    # Query Filtering: Kiểm tra các từ khóa không liên quan
+    if any(keyword in question for keyword in ['thời tiết', 'tin tức', 'giá cả', 'bóng đá']):
+        return {
+            "response": "Xin lỗi, tôi chỉ hỗ trợ thông tin về tuyển sinh. Vui lòng hỏi về học phí, học bổng, hoặc thông tin trường!"}, 404, None
+
+    # Loại bỏ các cụm từ mở đầu không cần thiết
     question = re.sub(r'(tôi muốn biết|tìm hiểu|giới thiệu|thông tin|hỏi|biết)\s*(về)?\s*', '', question).strip()
+
+    # School Name Removal: Loại bỏ tên trường khỏi câu hỏi
+    school_patterns = r'\b(truong\s+)?thpt\s+ten\s+lo\s+man\b|\btrung\s+hoc\s+pho\s+thong\s+ten\s+lo\s+man\b|\bthpt\s+ernst\s+thalmann\b|\bten\s+lo\s+man\b|\bernst\s+thalmann\b|\bersnt\s+thalmann\b|\bthpt\s+ten\s+lo\s+man\b|\btrung\s+hoc\s+pho\s+thong\s+ernst\s+thalmann\b'
+    question = re.sub(school_patterns, '', question, flags=re.IGNORECASE).strip()
+
+    # Kiểm tra nếu câu hỏi rỗng sau khi loại bỏ tên trường
+    if not question:
+        return {"response": "Xin lỗi, câu hỏi của bạn quá chung chung. Vui lòng cung cấp thêm chi tiết!"}, 404, None
 
     norm_question = normalize_text(question)
     split_question = split_sticky_words(norm_question)
     tokenized_question = ViTokenizer.tokenize(split_question)
-    clean_question = ' '.join(remove_vietnamese_stopwords(tokenized_question)) if remove_vietnamese_stopwords(tokenized_question) else tokenized_question
+    clean_question = ' '.join(remove_vietnamese_stopwords(tokenized_question)) if remove_vietnamese_stopwords(
+        tokenized_question) else tokenized_question
 
     best_match = None
     for item in admissions_data['questions']:
@@ -113,7 +135,8 @@ def find_answer_and_media(question):
                 norm_q = normalize_text(q)
                 split_q = split_sticky_words(norm_q)
                 tokenized_q = ViTokenizer.tokenize(split_q)
-                clean_q = ' '.join(remove_vietnamese_stopwords(tokenized_q)) if remove_vietnamese_stopwords(tokenized_q) else tokenized_q
+                clean_q = ' '.join(remove_vietnamese_stopwords(tokenized_q)) if remove_vietnamese_stopwords(
+                    tokenized_q) else tokenized_q
                 if clean_question in clean_q or tokenized_question in tokenized_q:
                     best_match = item
                     break
@@ -140,7 +163,8 @@ def find_answer_and_media(question):
         images = best_match.get('images', [])
         captions = best_match.get('captions', [])
         video_url = best_match["video_url"]
-        return {"response": answer_text, "images": images, "captions": captions, "video_url": video_url}, 200, "multimedia"
+        return {"response": answer_text, "images": images, "captions": captions,
+                "video_url": video_url}, 200, "multimedia"
     elif has_video:
         return {"response": answer_text, "video_url": best_match["video_url"]}, 200, "video"
     elif has_images:
@@ -156,17 +180,18 @@ def find_answer_and_media(question):
     else:
         return {"response": answer_text}, 200, "text"
 
-print(f'loading chatbot... END (elapsed time: {time.time()-t0:.2f} seconds)')  #endregion
+
+print(f'loading chatbot... END (elapsed time: {time.time() - t0:.2f} seconds)')  # endregion
 
 
 # web
 @app.route('/')
-def         index():
+def index():
     return render_template('index.html')
 
 
 @app.route('/ask', methods=['POST'])
-def          ask():
+def ask():
     data = request.get_json()
     if not data or 'question' not in data:
         return jsonify({"error": "Vui lòng cung cấp câu hỏi trong JSON (key: 'question')"}), 400
