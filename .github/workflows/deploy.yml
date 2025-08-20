@@ -1,35 +1,45 @@
 name: Deploy to GCP Compute Engine
 
-     on:
-       push:
-         branches:
-           - master
+on:
+  push:
+    branches:
+      - GCP
 
-     jobs:
-       deploy:
-         runs-on: ubuntu-latest
-         steps:
-           - name: Checkout code
-             uses: actions/checkout@v4
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-           - name: Set up SSH
-             env:
-               SSH_PRIVATE_KEY: ${{ secrets.GCP_DEPLOY_KEY }}
-             run: |
-               mkdir -p ~/.ssh
-               echo "$SSH_PRIVATE_KEY" > ~/.ssh/gcp_deploy_key
-               chmod 600 ~/.ssh/gcp_deploy_key
-               eval "$(ssh-agent -s)"
-               ssh-add ~/.ssh/gcp_deploy_key
+      - name: Set up SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.GCP_DEPLOY_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/gcp_deploy_key
+          chmod 600 ~/.ssh/gcp_deploy_key
+          ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
-           - name: Deploy to VM
-             env:
-               VM_IP: ${{ secrets.VM_IP }}
-               VM_USER: ${{ secrets.VM_USER }}
-             run: |
-               ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP << 'EOF'
-               cd /home/$VM_USER/test2 || { echo "Directory not found, cloning..."; git clone https://github.com/LaloS1357/test2.git -b master /home/$VM_USER/test2; }
-               cd /home/$VM_USER/test2
-               git pull origin master
-               bash composeup.sh
-               EOF
+      - name: Deploy to VM
+        env:
+          VM_IP: ${{ secrets.VM_IP }}
+          VM_USER: ${{ secrets.VM_USER }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/gcp_deploy_key "$VM_USER@$VM_IP" << 'EOF'
+            set -e
+            if [ ! -d "/home/$VM_USER/test2" ]; then
+              git clone https://github.com/LaloS1357/test2.git -b GCP /home/$VM_USER/test2
+            else
+              cd /home/$VM_USER/test2
+              git pull origin GCP
+            fi
+            cd /home/$VM_USER/test2 || { echo "Failed to change directory"; exit 1; }
+            if [ -f "composeup.sh" ]; then
+              bash composeup.sh
+            else
+              docker-compose down
+              docker-compose up --build -d
+            fi
+            docker-compose logs --tail=10
+          EOF
