@@ -34,7 +34,8 @@ jobs:
         run: |
           echo "VM_USER=$VM_USER" 
           echo "VM_IP=$VM_IP"
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vm_ssh_key "$VM_USER@$VM_IP" << EOT
+          echo "ssh -o StrictHostKeyChecking=no -i ~/.ssh/vm_ssh_key $VM_USER@$VM_IP  "
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vm_ssh_key $VM_USER@$VM_IP << EOT
             set -eou pipefail
             
             # Clone or update repository
