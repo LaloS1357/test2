@@ -23,23 +23,18 @@ jobs:
           echo "VM_IP=$VM_IP"                   >> $GITHUB_ENV
 
       - name: Set up SSH
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.GCP_DEPLOY_KEY }}
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/gcp_deploy_key
-          chmod 600                 ~/.ssh/gcp_deploy_key
+          mkdir -p                 ~/.ssh
+          echo "$GCP_DEPLOY_KEY" > ~/.ssh/gcp_deploy_key
+          chmod 600                ~/.ssh/gcp_deploy_key
           ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-
-      - env:
-          VM_IP:   ${{ secrets.VM_IP }}
-          VM_USER: ${{ secrets.VM_USER }}
+          ssh-keyscan -H $VM_IP     >> ~/.ssh/known_hosts
 
       - run: |
           echo "VM_USER=$VM_USER"
           echo "VM_IP=$VM_IP"
           echo "ssh -o StrictHostKeyChecking=no -i ~/.ssh/gcp_deploy_key $VM_USER@$VM_IP"
-      - run: |
+          echo
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/gcp_deploy_key "$VM_USER@$VM_IP" << 'EOT'
             pwd; 
             echo \$HOME; 
