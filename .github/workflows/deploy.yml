@@ -23,9 +23,9 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p                               ~/.ssh
-          echo "${{ secrets.GCP_DEPLOY_KEY }}" > ~/.ssh/gcp_deploy_key
-          chmod 600                              ~/.ssh/gcp_deploy_key
-          ssh-keyscan -H "$VM_IP"             >> ~/.ssh/known_hosts
+#          echo "${{ secrets.GCP_DEPLOY_KEY }}" > ~/.ssh/gcp_deploy_key
+#          chmod 600                              ~/.ssh/gcp_deploy_key
+#          ssh-keyscan -H "$VM_IP"             >> ~/.ssh/known_hosts
 
       - name: Deploy to VM
         env:
