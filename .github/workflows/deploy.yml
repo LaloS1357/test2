@@ -14,8 +14,8 @@ jobs:
 
       - name: Set envvar
         env:
-          VM_USER: ${{ secrets.VM_USER }}
-          VM_IP:   ${{ secrets.VM_IP }}
+          VM_USER: Lola
+          VM_IP:   34.143.236.100
         run: |
           echo "VM_USER=$VM_USER" >> $GITHUB_ENV
           echo "VM_IP=$VM_IP"     >> $GITHUB_ENV
@@ -24,13 +24,14 @@ jobs:
         run: |
           mkdir -p                               ~/.ssh
           echo "${{ secrets.GCP_DEPLOY_KEY }}" > ~/.ssh/gcp_deploy_key
-          cat ~/.ssh/gcp_deploy_key
-#          chmod 600                              ~/.ssh/gcp_deploy_key
+          chmod 600                              ~/.ssh/gcp_deploy_key
+          echo "VM_USER=$VM_USER" 
+          echo "VM_IP=$VM_IP"
 #          ssh-keyscan -H "$VM_IP"             >> ~/.ssh/known_hosts
 
       - name: Deploy to VM
         env:
-          PROJECT_DIR: /home/$VM_USER/test2
+          PROJECT_DIR: ~/test2
           REPO_URL:    https://github.com/${{ github.repository }}.git
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/gcp_deploy_key "$VM_USER@$VM_IP" << EOT
