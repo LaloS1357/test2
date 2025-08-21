@@ -1,143 +1,176 @@
 # Copyright (c) [2025] [Nguyễn Minh Tấn Phúc]. Bảo lưu mọi quyền.
+# Nguồn gốc logic chatbot: https://tlmchattest.streamlit.app/
+# Cấu trúc máy chủ Flask được điều chỉnh từ file app.py.
+
 import json
 import os
 import re
 import time
-from flask import Flask, request, jsonify, render_template, send_from_directory
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
 import torch
+import numpy as np
+
+from flask import Flask, request, jsonify, render_template, send_from_directory
+from sentence_transformers import SentenceTransformer, util
 from pyvi import ViTokenizer
-import unicodedata
 from underthesea import word_tokenize
 
+# --- KHỞI TẠO ỨNG DỤNG FLASK ---
 app = Flask(__name__)
 
-print('loading chatbot... BEGIN')
+print('Đang tải chatbot... BẮT ĐẦU')
 t0 = time.time()
 
+# --- CÁC HÀM TIỆN ÍCH (Giữ nguyên từ chatbot.py gốc) ---
+
+# Hàm loại bỏ từ dừng tiếng Việt
 def remove_vietnamese_stopwords(tokenized_text):
+    # Mở rộng danh sách từ dừng để xử lý các từ thường đi kèm tên trường
     stopwords = [
-        'là', 'của', 'và', 'có', 'trong', 'được', 'cho', 'với', 'tại', 'từ',
+        'là', 'và', 'có', 'của', 'trong', 'được', 'cho', 'với', 'tại', 'từ',
         'bởi', 'để', 'như', 'thì', 'mà', 'này', 'kia', 'đó', 'nào', 'cái',
-        'những', 'một', 'các', 'đã', 'lại', 'còn', 'nếu', 'vì', 'do', 'bị'
+        'những', 'một', 'các', 'đã', 'lại', 'còn', 'nếu', 'vì', 'do', 'bị',
+        'về', 'trường', 'thpt', 'ten', 'lơ', 'man', 'ernst', 'thalmann'
     ]
     tokens = tokenized_text.split() if isinstance(tokenized_text, str) else tokenized_text
     return [token for token in tokens if token not in stopwords]
 
+# Hàm chuẩn hóa văn bản
 def normalize_text(text):
-    text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('utf-8')
     text = text.lower().strip()
     text = re.sub(r'\s+', ' ', text)
     return text
 
+# Hàm tách từ dính
 def split_sticky_words(text):
-    text = text.lower().replace(' ', '')
-    tokenized = word_tokenize(text, format="text")
-    return tokenized
+    return word_tokenize(text, format="text")
 
+
+# --- CẤU HÌNH VÀ TẢI DỮ LIỆU/MÔ HÌNH (Chuyển đổi từ Streamlit sang Flask global scope) ---
 device = "cuda" if torch.cuda.is_available() else "cpu"
+print(f"Sử dụng thiết bị: {device}")
+
 model = None
 question_embeddings = None
+question_texts = []
+question_data_map = {}
 admissions_data = {"questions": []}
 
 try:
+    # Tải dữ liệu từ admissions_data.json
     with open(os.path.join(os.path.dirname(__file__), 'admissions_data.json'), 'r', encoding='utf-8') as f:
         admissions_data = json.load(f)
-        if not isinstance(admissions_data, dict) or 'questions' not in admissions_data:
-            raise ValueError("admissions_data.json must be a dictionary with a 'questions' key")
-        if not isinstance(admissions_data['questions'], list):
-            raise ValueError("'questions' in admissions_data.json must be a list")
-except FileNotFoundError:
-    print("Không tìm thấy file admissions_data.json. Vui lòng kiểm tra lại.")
-except ValueError as e:
-    print(f"Lỗi trong admissions_data.json: {e}")
 except Exception as e:
-    print(f"Lỗi khi tải admissions_data.json: {e}")
+    print(f"Lỗi nghiêm trọng khi tải admissions_data.json: {e}")
 
 try:
-    model = SentenceTransformer('dangvantuan/vietnamese-embedding', device=device)
-    question_texts = []
-    question_data_map = {}
-    for item in admissions_data['questions']:
-        if not isinstance(item, dict) or 'question' not in item:
-            print(f"Warning: Skipping invalid item in admissions_data['questions']: {item}")
-            continue
-        questions = item['question'] if isinstance(item['question'], list) else [item['question']]
-        for q in questions:
-            if not isinstance(q, str) or not q.strip():
-                print(f"Warning: Skipping invalid question: {q}")
-                continue
-            norm_q = normalize_text(q)
-            split_q = split_sticky_words(norm_q)
-            tokenized_q = ViTokenizer.tokenize(split_q)
-            clean_q = ' '.join(remove_vietnamese_stopwords(tokenized_q))
-            question_texts.append(clean_q)
-            question_data_map[clean_q] = item
-    if question_texts:
-        question_embeddings = model.encode(question_texts)
+    # Tải mô hình SentenceTransformer
+    model = SentenceTransformer('bkai-foundation-models/vietnamese-bi-encoder', device=device)
 except Exception as e:
-    print(f"Lỗi khi tải mô hình hoặc embedding: {e}")
+    print(f"Lỗi nghiêm trọng khi tải mô hình SentenceTransformer: {e}")
 
-def find_answer_and_media(question):
-    norm_question = normalize_text(question)
-    split_question = split_sticky_words(norm_question)
-    tokenized_q = ViTokenizer.tokenize(split_question)
-    clean_question = ' '.join(remove_vietnamese_stopwords(tokenized_q))
-    best_match = None
-    for item in admissions_data['questions']:
-        questions = item['question'] if isinstance(item['question'], list) else [item['question']]
-        for q in questions:
-            norm_q = normalize_text(q)
-            split_q = split_sticky_words(norm_q)
-            tokenized_q_ref = ViTokenizer.tokenize(split_q)
-            clean_q = ' '.join(remove_vietnamese_stopwords(tokenized_q_ref))
-            if clean_question in clean_q or clean_q in clean_question:
-                best_match = item
-                break
-        if best_match:
-            break
+# Mã hóa các câu hỏi từ admissions_data.json để tìm kiếm
+if model:
+    try:
+        for item in admissions_data.get('questions', []):
+            questions = item.get('question', [])
+            if not isinstance(questions, list):
+                questions = [questions]
 
-    if best_match is None and model and question_embeddings is not None:
-        query_embedding = model.encode([clean_question])
-        cosine_scores = cosine_similarity(query_embedding, question_embeddings)[0]
-        best_score = np.max(cosine_scores)
-        best_index = np.argmax(cosine_scores)
-        if best_score < 0.6:
-            return {"response": "Xin lỗi, không tìm thấy thông tin phù hợp. Vui lòng kiểm tra lại từ khóa!"}, 404, None
-        best_match = question_data_map[question_texts[best_index]]
+            for q in questions:
+                if not isinstance(q, str) or not q.strip():
+                    continue
 
-    answer_text = best_match.get('answer', "Không có câu trả lời.")
-    if "images" in best_match and isinstance(best_match["images"], str):
-        best_match["images"] = [best_match["images"]]
+                # Quy trình xử lý tương tự như câu hỏi của người dùng
+                norm_q = normalize_text(q)
+                split_q = split_sticky_words(norm_q)
+                tokenized_q = ViTokenizer.tokenize(split_q)
+                # Không xóa từ dừng ở đây để giữ ngữ nghĩa gốc
+                question_texts.append(tokenized_q)
+                question_data_map[tokenized_q] = item
 
-    has_images = "images" in best_match and best_match["images"]
-    has_video = "video_url" in best_match and best_match["video_url"]
-
-    if has_images and has_video:
-        images = [f"/images/{img}" for img in best_match.get('images', [])]
-        captions = best_match.get('captions', [])
-        video_url = best_match["video_url"]
-        return {"response": answer_text, "images": images, "captions": captions, "video_url": video_url}, 200, "multimedia"
-    elif has_video:
-        return {"response": answer_text, "video_url": best_match["video_url"]}, 200, "video"
-    elif has_images:
-        images = [f"/images/{img}" for img in best_match.get('images', [])]
-        captions = best_match.get('captions', [])
-        valid_images = [img for img in images if isinstance(img, str) and img.strip() != ""]
-        if valid_images and captions is not None:
-            valid_captions = captions[:len(valid_images)] if len(captions) >= len(valid_images) else captions + [f"Ảnh {i + 1}" for i in range(len(valid_images) - len(captions))]
+        if question_texts:
+            question_embeddings = model.encode(question_texts, convert_to_tensor=True)
+            print(f"Đã mã hóa thành công {len(question_texts)} câu hỏi.")
         else:
-            valid_captions = []
-        return {"response": answer_text, "images": valid_images, "captions": valid_captions}, 200, "image"
-    else:
-        return {"response": answer_text}, 200, "text"
+            print("Không có câu hỏi nào để mã hóa trong admissions_data.json.")
 
-print(f'loading chatbot... END (elapsed time: {time.time() - t0:.2f} seconds)')
+    except Exception as e:
+        print(f"Lỗi trong quá trình mã hóa câu hỏi: {e}")
+
+
+# --- HÀM TÌM KIẾM CÂU TRẢ LỜI (Giữ nguyên từ chatbot.py gốc, bỏ phụ thuộc Streamlit) ---
+def find_answer_and_media(question):
+    if not model or question_embeddings is None:
+        return "Chatbot đang gặp sự cố, vui lòng thử lại sau.", "text", None
+
+    # 1. Chuẩn hóa và làm sạch câu hỏi của người dùng
+    norm_question = normalize_text(question)
+
+    # Mẫu regex để nhận diện và loại bỏ tên trường
+    school_patterns = re.compile(
+        r'\b(của\s+)?(trường\s+)?(thpt\s+)?(ten\s+lơ\s+man|ernst\s+thälmann|ernst\s+thalmann)\b',
+        re.IGNORECASE
+    )
+    # Loại bỏ tên trường khỏi câu hỏi
+    core_question = school_patterns.sub('', norm_question).strip()
+
+    # Nếu câu hỏi chỉ chứa tên trường, trả về lời chào chung
+    if not core_question or core_question in ['về', 'của']:
+        return admissions_data['questions'][22]['answer'], "image", (admissions_data['questions'][22]['images'],
+                                                                     admissions_data['questions'][22]['captions'])
+
+    # Xử lý phần lõi của câu hỏi
+    split_question = split_sticky_words(core_question)
+    tokenized_question = ViTokenizer.tokenize(split_question)
+
+    # Loại bỏ từ dừng sau khi đã xử lý tên trường
+    clean_question = ' '.join(remove_vietnamese_stopwords(tokenized_question.split()))
+
+    if not clean_question.strip():
+        return "Câu hỏi của bạn chưa rõ ràng, vui lòng cung cấp thêm chi tiết.", "text", None
+
+    # 2. Tìm kiếm ngữ nghĩa (Semantic Search)
+    query_embedding = model.encode(clean_question, convert_to_tensor=True)
+    cosine_scores = util.pytorch_cos_sim(query_embedding, question_embeddings)[0]
+
+    # 3. Lấy top 5 kết quả có điểm cao nhất
+    top_k = min(5, len(question_texts))
+    top_results = torch.topk(cosine_scores, k=top_k)
+
+    best_score = top_results[0][0].item()
+    best_index = top_results[1][0].item()
+
+    # 4. Kiểm tra ngưỡng điểm
+    if best_score < 0.45:  # Tăng ngưỡng để kết quả chính xác hơn
+        return "Xin lỗi, tôi không tìm thấy thông tin phù hợp. Bạn có thể thử hỏi bằng cách khác được không?", "text", None
+
+    # 5. Lấy câu trả lời và media tương ứng
+    best_match_text = question_texts[best_index]
+    best_match_data = question_data_map[best_match_text]
+
+    answer_text = best_match_data.get('answer', "Không có câu trả lời.")
+    images = best_match_data.get('images')
+    captions = best_match_data.get('captions')
+    video_url = best_match_data.get('video_url')
+
+    # Xử lý định dạng media
+    if images and isinstance(images, str):
+        images = [images]
+
+    if video_url:
+        return answer_text, "video", video_url
+    if images:
+        return answer_text, "image", (images, captions)
+
+    return answer_text, "text", None
+
+print(f'Đã tải chatbot... HOÀN TẤT (thời gian: {time.time() - t0:.2f} giây)')
+
+# --- CÁC ĐIỂM CUỐI (API ENDPOINTS) CỦA FLASK ---
 
 @app.route('/')
 def index():
+    # Phục vụ file index.html cho giao diện người dùng
     return render_template('index.html')
 
 @app.route('/ask', methods=['POST'])
@@ -145,21 +178,35 @@ def ask():
     data = request.get_json()
     if not data or 'question' not in data:
         return jsonify({"error": "Vui lòng cung cấp câu hỏi trong JSON (key: 'question')"}), 400
+
     question = data['question']
-    response, status_code, media_type = find_answer_and_media(question)
-    if status_code != 200:
-        return jsonify(response), status_code
-    return jsonify({
-        "response": response["response"],
+    response, media_type, media_content = find_answer_and_media(question)
+
+    # Xây dựng phản hồi JSON dựa trên kết quả
+    json_response = {
+        "response": response,
         "media_type": media_type,
-        "images": response.get("images", []),
-        "captions": response.get("captions", []),
-        "video_url": response.get("video_url", None)
-    }), status_code
+        "images": [],
+        "captions": [],
+        "video_url": None
+    }
+
+    if media_type == "video":
+        json_response["video_url"] = media_content
+    elif media_type == "image":
+        images, captions = media_content
+        # Tạo đường dẫn URL đầy đủ cho hình ảnh
+        json_response["images"] = [f"/images/{os.path.basename(img)}" for img in images if isinstance(img, str) and img.strip()]
+        json_response["captions"] = captions if captions else []
+
+    return jsonify(json_response), 200
 
 @app.route('/images/<path:filename>')
 def serve_image(filename):
+    # Phục vụ các file ảnh tĩnh từ thư mục 'images'
     return send_from_directory('images', filename)
 
+# --- CHẠY ỨNG DỤNG ---
 if __name__ == '__main__':
+    # Chạy máy chủ Flask, có thể truy cập từ các thiết bị khác trong mạng
     app.run(host='0.0.0.0', port=8080)
