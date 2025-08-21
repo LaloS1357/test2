@@ -28,21 +28,37 @@ jobs:
           ssh-keyscan -H "$VM_IP"             >> ~/.ssh/known_hosts
 
       - name: Deploy to VM
+        env:
+          PROJECT_DIR: /home/$VM_USER/test2
+          REPO_URL:    https://github.com/${{ github.repository }}.git
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/gcp_deploy_key "$VM_USER@$VM_IP" << 'EOT'
-            set -e
-            if [ ! -d "/home/$VM_USER/test2" ]; then
-              git clone https://github.com/${{ github.repository }}.git -b GCP /home/$VM_USER/test2
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/gcp_deploy_key "$VM_USER@$VM_IP" << EOT
+            set -eou pipefail
+            
+            # Clone or update repository
+            if [ ! -d "$PROJECT_DIR" ]; then
+              echo "Cloning repository..."
+              git clone $REPO_URL -b GCP "$PROJECT_DIR"
             else
-              cd /home/$VM_USER/test2
-              git pull origin GCP
+              echo "Updating repository..."
+              cd "$PROJECT_DIR"
+              git fetch origin
+              git reset --hard origin/GCP
             fi
-            cd /home/$VM_USER/test2 || { echo "Failed to change directory"; exit 1; }
+            
+            cd "$PROJECT_DIR" || { echo "Failed to change directory to $PROJECT_DIR"; exit 1; }
+            
+            # Deploy application
             if [ -f "composeup.sh" ]; then
+              echo "Running custom deployment script..."
               bash composeup.sh
             else
-              docker-compose down
+              echo "Running standard Docker Compose deployment..."
+              docker-compose down || true
               docker-compose up --build -d
             fi
+            
+            # Show recent logs
+            echo "Recent application logs:"
             docker-compose logs --tail=10
           EOT
