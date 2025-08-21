@@ -1,3 +1,0 @@
-steps:
-- name: 'gcr.io/cloud-builders/gcloud'
-  args: ['compute', 'ssh', 'tlmchatbot', '--zone=asia-southeast1-b', '--project=tlmchatbot', '--command', 'cd /opt/tlmchatbot && git checkout GCP && git pull origin GCP && sudo docker-compose -f /opt/tlmchatbot/docker-compose.yml up -d --build']
