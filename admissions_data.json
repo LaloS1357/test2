@@ -2,9 +2,9 @@
   "questions": [
     {
       "question": ["Học phí của trường là bao nhiêu?", "học phí", "giá tiền", "tiền học"],
-      "answer": "Học phí trung bình là 30 triệu VNĐ/năm, tùy theo ngành học.",
-      "images": ["images/campus.jpg", "images/students.jpg"],
-      "captions": ["cổng trường", "lễ tốt nghiệp"]
+      "answer": "Học phí trung bình là 30 triệu VNĐ/năm, tùy theo ngành học(thông tin thử nghiệm)",
+      "images": null,
+      "captions": null
     },
     {
       "question": ["đồng phục","uniform","đồng phục của trường"],
@@ -14,8 +14,8 @@
     },
     {
       "question": "Làm thế nào để đăng ký xét tuyển?",
-      "answer": "Bạn có thể đăng ký trực tuyến qua website trường hoặc nộp hồ sơ trực tiếp tại văn phòng tuyển sinh.",
-      "images": ["images/campus.jpg", "images/graduation.jpg"],
+      "answer": "Bạn có thể đăng ký trực tuyến qua website trường hoặc nộp hồ sơ trực tiếp tại văn phòng tuyển sinh(thông tin thử nghiệm)",
+      "images": null,
       "captions": null
     },
     {
@@ -525,7 +525,7 @@
     },
     {
       "question": ["máy lạnh","điều hoà","trường có máy lạnh không","lớp học có máy lạnh không","căn tin có máy lạnh không"],
-      "answer": "100% lớp học, thư viện đều được trang bị 2 máy lạnh và căn tin cũng có máy lạnh",
+      "answer": "100% lớp học, thư viện đều được trang bị 2 máy lạnh và căn tin cũng có máy lạnh(thông tin thử nghiệm)",
       "images": null,
       "captions": null
     },
