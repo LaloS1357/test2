@@ -23,18 +23,18 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p                               ~/.ssh
-          echo "${{ secrets.GCP_DEPLOY_KEY }}" > ~/.ssh/gcp_deploy_key
-          chmod 600                              ~/.ssh/gcp_deploy_key
-          echo "VM_USER=$VM_USER" 
-          echo "VM_IP=$VM_IP"
-#          ssh-keyscan -H "$VM_IP"             >> ~/.ssh/known_hosts
+          echo "${{ secrets.VM_SSH_KEY_STR }}" > ~/.ssh/vm_ssh_key
+          chmod 600                              ~/.ssh/vm_ssh_key
+          ssh-keyscan -H "$VM_IP"             >> ~/.ssh/known_hosts
 
       - name: Deploy to VM
         env:
           PROJECT_DIR: ~/test2
           REPO_URL:    https://github.com/${{ github.repository }}.git
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/gcp_deploy_key "$VM_USER@$VM_IP" << EOT
+          echo "VM_USER=$VM_USER" 
+          echo "VM_IP=$VM_IP"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vm_ssh_key "$VM_USER@$VM_IP" << EOT
             set -eou pipefail
             
             # Clone or update repository
