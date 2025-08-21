@@ -51,7 +51,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/gcp_deploy_key "$VM_USER@$VM_IP" << 'EOT'
             set -e
             if [ ! -d "/home/$VM_USER/test2" ]; then
-              git clone https://github.com/LaloS1357/test2.git -b GCP /home/$VM_USER/test2
+              git clone https://github.com/${{ github.repository }}.git -b GCP /home/$VM_USER/test2
             else
               cd /home/$VM_USER/test2
               git pull origin GCP
