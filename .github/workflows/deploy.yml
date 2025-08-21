@@ -21,17 +21,22 @@ jobs:
           chmod 600                 ~/.ssh/gcp_deploy_key
           ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
+      - env:
+          VM_IP:   ${{ secrets.VM_IP }}
+          VM_USER: ${{ secrets.VM_USER }}
+
       - run: |
+          echo "VM_USER=$VM_USER"
+          echo "VM_IP=$VM_IP"
           echo "ssh -o StrictHostKeyChecking=no -i ~/.ssh/gcp_deploy_key $VM_USER@$VM_IP"
       - run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/gcp_deploy_key "$VM_USER@$VM_IP" << 'EOT'
-            pwd
+            pwd; 
+            echo \$HOME; 
+            echo \$USER; 
           EOT
 
       - name: Deploy to VM
-        env:
-          VM_IP:   ${{ secrets.VM_IP }}
-          VM_USER: ${{ secrets.VM_USER }}
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/gcp_deploy_key "$VM_USER@$VM_IP" << 'EOT'
             set -e
