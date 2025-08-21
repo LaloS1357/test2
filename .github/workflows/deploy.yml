@@ -18,15 +18,22 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/gcp_deploy_key
-          chmod 600 ~/.ssh/gcp_deploy_key
+          chmod 600                 ~/.ssh/gcp_deploy_key
           ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+
+      - run: |
+          echo "ssh -o StrictHostKeyChecking=no -i ~/.ssh/gcp_deploy_key $VM_USER@$VM_IP"
+      - run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/gcp_deploy_key "$VM_USER@$VM_IP" << 'EOT'
+            pwd
+          EOT
 
       - name: Deploy to VM
         env:
-          VM_IP: ${{ secrets.VM_IP }}
+          VM_IP:   ${{ secrets.VM_IP }}
           VM_USER: ${{ secrets.VM_USER }}
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/gcp_deploy_key "$VM_USER@$VM_IP" << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/gcp_deploy_key "$VM_USER@$VM_IP" << 'EOT'
             set -e
             if [ ! -d "/home/$VM_USER/test2" ]; then
               git clone https://github.com/LaloS1357/test2.git -b GCP /home/$VM_USER/test2
@@ -42,4 +49,4 @@ jobs:
               docker-compose up --build -d
             fi
             docker-compose logs --tail=10
-          EOF
+          EOT
