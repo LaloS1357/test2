@@ -5,20 +5,32 @@ import streamlit as st
 import os
 import re
 from PIL import Image
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer, util
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import torch
 from pyvi import ViTokenizer
-import unicodedata
+import unicodedata  # Thêm thư viện unicodedata
 from underthesea import word_tokenize
 
 
 # --- CÁC HÀM TIỆN ÍCH ---
 
+# *** BẮT ĐẦU THAY ĐỔI 1: Thêm hàm loại bỏ dấu ***
+# Hàm loại bỏ dấu tiếng Việt
+def remove_vietnamese_accents(text):
+    """
+    Hàm này nhận một chuỗi văn bản tiếng Việt và trả về chuỗi đó không có dấu.
+    """
+    return "".join(c for c in unicodedata.normalize('NFD', text)
+                   if unicodedata.category(c) != 'Mn')
+
+
+# *** KẾT THÚC THAY ĐỔI 1 ***
+
+
 # Hàm loại bỏ từ dừng tiếng Việt
 def remove_vietnamese_stopwords(tokenized_text):
-    # Mở rộng danh sách từ dừng để xử lý các từ thường đi kèm tên trường
     stopwords = [
         'là', 'và', 'có', 'của', 'trong', 'được', 'cho', 'với', 'tại', 'từ',
         'bởi', 'để', 'như', 'thì', 'mà', 'này', 'kia', 'đó', 'nào', 'cái',
@@ -62,10 +74,15 @@ except Exception as e:
     st.error(f"Lỗi khi tải mô hình SentenceTransformer: {e}")
     model = None
 
-# Mã hóa các câu hỏi từ admissions_data.json để tìm kiếm
+# *** BẮT ĐẦU THAY ĐỔI 2: Cập nhật quy trình mã hóa dữ liệu ***
+# Mã hóa phiên bản KHÔNG DẤU của các câu hỏi từ admissions_data.json để tìm kiếm
 if model and 'question_embeddings' not in st.session_state:
+    # Lưu các câu hỏi gốc (có dấu, đã tokenize) để làm key tra cứu
     st.session_state.question_texts = []
+    # Dùng để mã hóa thành vector
+    unaccented_questions_for_encoding = []
     st.session_state.question_data_map = {}
+
     for item in admissions_data.get('questions', []):
         questions = item.get('question', [])
         if not isinstance(questions, list):
@@ -75,18 +92,27 @@ if model and 'question_embeddings' not in st.session_state:
             if not isinstance(q, str) or not q.strip():
                 continue
 
-            # Quy trình xử lý tương tự như câu hỏi của người dùng
+            # Xử lý câu hỏi gốc
             norm_q = normalize_text(q)
             split_q = split_sticky_words(norm_q)
             tokenized_q = ViTokenizer.tokenize(split_q)
-            # Không xóa từ dừng ở đây để giữ ngữ nghĩa gốc
+
+            # Tạo phiên bản không dấu để tìm kiếm ngữ nghĩa
+            unaccented_q = remove_vietnamese_accents(tokenized_q)
+            unaccented_questions_for_encoding.append(unaccented_q)
+
+            # Lưu câu hỏi gốc có dấu làm key
             st.session_state.question_texts.append(tokenized_q)
             st.session_state.question_data_map[tokenized_q] = item
 
-    if st.session_state.question_texts:
-        st.session_state.question_embeddings = model.encode(st.session_state.question_texts, convert_to_tensor=True)
+    if unaccented_questions_for_encoding:
+        # Mã hóa các câu hỏi KHÔNG DẤU
+        st.session_state.question_embeddings = model.encode(unaccented_questions_for_encoding, convert_to_tensor=True)
     else:
         st.session_state.question_embeddings = None
+
+
+# *** KẾT THÚC THAY ĐỔI 2 ***
 
 
 # --- HÀM TÌM KIẾM CÂU TRẢ LỜI ---
@@ -96,32 +122,33 @@ def find_answer_and_media(question):
 
     # 1. Chuẩn hóa và làm sạch câu hỏi của người dùng
     norm_question = normalize_text(question)
-
-    # Mẫu regex để nhận diện và loại bỏ tên trường
     school_patterns = re.compile(
         r'\b(của\s+)?(trường\s+)?(thpt\s+)?(ten\s+lơ\s+man|ernst\s+thälmann|ernst\s+thalmann)\b',
         re.IGNORECASE
     )
-    # Loại bỏ tên trường khỏi câu hỏi
     core_question = school_patterns.sub('', norm_question).strip()
 
-    # Nếu câu hỏi chỉ chứa tên trường, trả về lời chào chung
     if not core_question or core_question in ['về', 'của']:
         return admissions_data['questions'][22]['answer'], "image", (admissions_data['questions'][22]['images'],
                                                                      admissions_data['questions'][22]['captions'])
 
+    # *** BẮT ĐẦU THAY ĐỔI 3: Cập nhật xử lý câu hỏi người dùng ***
     # Xử lý phần lõi của câu hỏi
     split_question = split_sticky_words(core_question)
     tokenized_question = ViTokenizer.tokenize(split_question)
-
-    # Loại bỏ từ dừng sau khi đã xử lý tên trường
     clean_question = ' '.join(remove_vietnamese_stopwords(tokenized_question.split()))
 
-    if not clean_question.strip():
+    # Chuyển câu hỏi của người dùng về dạng không dấu để so sánh
+    unaccented_clean_question = remove_vietnamese_accents(clean_question)
+
+    if not unaccented_clean_question.strip():
         return "Câu hỏi của bạn chưa rõ ràng, vui lòng cung cấp thêm chi tiết.", "text", None
 
     # 2. Tìm kiếm ngữ nghĩa (Semantic Search)
-    query_embedding = model.encode(clean_question, convert_to_tensor=True)
+    # Mã hóa câu hỏi KHÔNG DẤU của người dùng
+    query_embedding = model.encode(unaccented_clean_question, convert_to_tensor=True)
+    # *** KẾT THÚC THAY ĐỔI 3 ***
+
     cosine_scores = util.pytorch_cos_sim(query_embedding, st.session_state.question_embeddings)[0]
 
     # 3. Lấy top 5 kết quả có điểm cao nhất
@@ -132,10 +159,11 @@ def find_answer_and_media(question):
     best_index = top_results[1][0].item()
 
     # 4. Kiểm tra ngưỡng điểm
-    if best_score < 0.45:  # Tăng ngưỡng để kết quả chính xác hơn
+    if best_score < 0.45:
         return "Xin lỗi, tôi không tìm thấy thông tin phù hợp. Bạn có thể thử hỏi bằng cách khác được không?", "text", None
 
     # 5. Lấy câu trả lời và media tương ứng
+    # Dùng index để lấy câu hỏi GỐC (có dấu) làm key
     best_match_text = st.session_state.question_texts[best_index]
     best_match_data = st.session_state.question_data_map[best_match_text]
 
@@ -144,7 +172,6 @@ def find_answer_and_media(question):
     captions = best_match_data.get('captions')
     video_url = best_match_data.get('video_url')
 
-    # Xử lý định dạng media
     if images and isinstance(images, str):
         images = [images]
 
@@ -240,9 +267,6 @@ def main():
             st.session_state.messages = []
             st.rerun()
 
-
-# Thêm câu lệnh import cần thiết cho PyTorch
-from sentence_transformers import util
 
 if __name__ == "__main__":
     main()
