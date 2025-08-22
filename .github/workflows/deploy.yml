@@ -14,7 +14,7 @@ jobs:
 
       - name: Set envvar
         env:
-          VM_USER: Lalo
+          VM_USER: ubuntu
           VM_IP:   35.240.138.116
         run: |
           echo "VM_USER=$VM_USER" >> $GITHUB_ENV
