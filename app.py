@@ -49,6 +49,24 @@ def normalize_text(text):
     return text
 
 
+def add_li_ly_variants(keyword):
+    # Add both 'li' and 'ly' variants for Vietnamese spelling
+    variants = set([keyword])
+    if ' li ' in f' {keyword} ':
+        variants.add(keyword.replace(' li ', ' ly '))
+    if ' ly ' in f' {keyword} ':
+        variants.add(keyword.replace(' ly ', ' li '))
+    # Also handle at end/start
+    if keyword.endswith('li'):
+        variants.add(keyword[:-2] + 'ly')
+    if keyword.endswith('ly'):
+        variants.add(keyword[:-2] + 'li')
+    if keyword.startswith('li '):
+        variants.add('ly ' + keyword[3:])
+    if keyword.startswith('ly '):
+        variants.add('li ' + keyword[3:])
+    return variants
+
 def get_all_question_keywords():
     # Extract all question keywords from admissions_data.json, normalize and remove diacritics
     keywords = set()
@@ -61,9 +79,11 @@ def get_all_question_keywords():
             unaccented_q = remove_vietnamese_accents(norm_q)
             # Add both diacritic and non-diacritic forms
             if len(norm_q) > 2:
-                keywords.add(norm_q)
+                for v in add_li_ly_variants(norm_q):
+                    keywords.add(v)
             if len(unaccented_q) > 2:
-                keywords.add(unaccented_q)
+                for v in add_li_ly_variants(unaccented_q):
+                    keywords.add(v)
     # Sort by length descending to avoid partial matches
     return sorted(keywords, key=lambda x: -len(x))
 
@@ -71,30 +91,19 @@ QUESTION_KEYWORDS = get_all_question_keywords()
 
 # Helper: normalize and remove diacritics for all matching
 def normalize_and_unaccent(text):
-    return remove_vietnamese_accents(normalize_text(text))
+    norm = remove_vietnamese_accents(normalize_text(text))
+    # Map 'ly' to 'li' for matching
+    norm = re.sub(r'\bly\b', 'li', norm)
+    return norm
 
 # Improved splitting for multi-idea, non-diacritic text
 
 def split_subquestions(text):
     norm_text = normalize_and_unaccent(text)
-    # Split by common conjunctions (có dấu và không dấu)
+    # Only split by explicit conjunctions, not by keyword overlap
     conjunctions = [r'và', r'hay', r'hoặc', r'va', r'hoac']
-    pattern = r'[;,]|(' + '|'.join(conjunctions) + r')\b'
+    pattern = r'[;,]|\b(' + '|'.join(conjunctions) + r')\b'
     subqs = re.split(pattern, norm_text)
-    # Further split by known question keywords (both diacritic and non-diacritic)
-    results = []
-    temp = norm_text
-    for kw in QUESTION_KEYWORDS:
-        # Match both diacritic and non-diacritic forms
-        kw_norm = normalize_and_unaccent(kw)
-        temp = re.sub(r'\b' + re.escape(kw_norm) + r'\b', f'|{kw_norm}|', temp)
-    for part in temp.split('|'):
-        part = part.strip()
-        if part and len(part) > 2:
-            results.append(part)
-    results = [q for q in set(results) if len(q) > 2]
-    if results:
-        return results
     subqs = [q.strip() for q in subqs if q and len(q.strip()) > 2]
     return subqs
 
@@ -130,7 +139,7 @@ def get_answer(question):
     for subq in sub_questions:
         ans, media_type, media_content = find_answer_and_media(subq)
         if ans and ans.strip():
-            results.append({"text": f"- {subq}: {ans}", "media_type": media_type, "media_content": media_content})
+            results.append({"text": ans, "media_type": media_type, "media_content": media_content})
     if results:
         return results
     return [{"text": "Xin lỗi, tôi chưa tìm thấy thông tin phù hợp cho các ý bạn hỏi.", "media_type": "text", "media_content": None}]
@@ -290,10 +299,7 @@ for item in admissions_data.get('questions', []):
 def find_answer_and_media(question):
     if not model or st.session_state.question_embeddings is None or st.session_state.tfidf_matrix is None:
         return "Chatbot đang gặp sự cố, vui lòng thử lại sau.", "text", None
-
     norm_question = normalize_and_unaccent(question)
-    # --- DEPARTMENT STRICT MATCHING ---
-    # Removed department matching logic due to missing DEPARTMENT_KEYWORD_MAP and DEPARTMENT_ITEM_MAP
     # Direct keyword lookup (prioritize exact match)
     direct_item = KEYWORD_ANSWER_MAP.get(norm_question)
     if direct_item:
@@ -309,7 +315,6 @@ def find_answer_and_media(question):
             return answer, "image", (images, captions)
         return answer, "text", None
 
-    # --- ROBUST PHRASE AND TOKEN MATCHING LOGIC ---
     tokens = norm_question.split()
     num_tokens = len(tokens)
 
@@ -336,8 +341,9 @@ def find_answer_and_media(question):
             item = KEYWORD_TO_ITEM_MAP.get(phrase)
             if item:
                 phrase_matches.append((phrase, item, length))
+    # If any phrase match exists, always return only the best phrase match and skip token matching
     if phrase_matches:
-        # Prefer the match with the most tokens (longest phrase)
+        # Find the phrase match with the longest length and highest priority
         phrase_matches.sort(key=lambda x: (-x[2], -len(x[0])))
         best_phrase, best_item, _ = phrase_matches[0]
         answer = best_item.get('answer', "Không có câu trả lời.")
@@ -371,16 +377,68 @@ def find_answer_and_media(question):
 
     # 4. For queries with >2 tokens, fallback to single token matching only if no phrase match
     matched_items = []
-    if num_tokens > 2:
+    matched_tokens = []
+    # Only perform token matching if no phrase match exists
+    if num_tokens > 2 and not phrase_matches:
+        best_token_item = None
+        best_token_length = 0
+        for i in range(num_tokens):
+            for j in range(i+1, num_tokens+1):
+                phrase = ' '.join(tokens[i:j])
+                item = KEYWORD_TO_ITEM_MAP.get(phrase)
+                if item and (j-i) > best_token_length:
+                    best_token_length = (j-i)
+                    best_token_item = item
+        if best_token_item:
+            answer = best_token_item.get('answer', "Không có câu trả lời.")
+            images = best_token_item.get('images')
+            captions = best_token_item.get('captions')
+            video_url = best_token_item.get('video_url')
+            if images and isinstance(images, str):
+                images = [images]
+            if video_url:
+                return answer, "video", video_url
+            if images:
+                return answer, "image", (images, captions)
+            return answer, "text", None
+        # If no best_token_item, try single token matching (but only return the best one)
         for token in tokens:
             item = KEYWORD_TO_ITEM_MAP.get(token)
             if item and item not in matched_items:
                 matched_items.append(item)
+                matched_tokens.append(token)
         if matched_items:
-            answer = matched_items[0].get('answer', "Không có câu trả lời.")
-            images = matched_items[0].get('images')
-            captions = matched_items[0].get('captions')
-            video_url = matched_items[0].get('video_url')
+            best_item = None
+            best_length = 0
+            user_input = norm_question
+            for idx, item in enumerate(matched_items):
+                questions = item.get('question', [])
+                if isinstance(questions, str):
+                    questions = [questions]
+                for q in questions:
+                    norm_q = normalize_and_unaccent(q)
+                    if norm_q in user_input:
+                        if len(norm_q) > best_length:
+                            best_length = len(norm_q)
+                            best_item = item
+            if not best_item:
+                best_length = 0
+                for idx, item in enumerate(matched_items):
+                    questions = item.get('question', [])
+                    if isinstance(questions, str):
+                        questions = [questions]
+                    for q in questions:
+                        norm_q = normalize_and_unaccent(q)
+                        if norm_q == matched_tokens[idx]:
+                            if len(norm_q) > best_length:
+                                best_length = len(norm_q)
+                                best_item = item
+            if not best_item:
+                best_item = matched_items[0]
+            answer = best_item.get('answer', "Không có câu trả lời.")
+            images = best_item.get('images')
+            captions = best_item.get('captions')
+            video_url = best_item.get('video_url')
             if images and isinstance(images, str):
                 images = [images]
             if video_url:
@@ -441,13 +499,13 @@ def main():
                                      caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}")
 
     if prompt := st.chat_input("Câu hỏi của bạn:"):
-        normalized_prompt = remove_vietnamese_accents(prompt.lower())
+        # Pass raw prompt to get_answer, let get_answer handle normalization
         st.session_state.messages.append({"role": "user", "text": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
 
         with st.spinner("Đang xử lý câu hỏi..."):
-            responses = get_answer(normalized_prompt)
+            responses = get_answer(prompt)
 
         with st.chat_message("assistant"):
             for resp in responses:
