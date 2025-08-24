@@ -8,10 +8,11 @@ from sentence_transformers import SentenceTransformer, util
 import torch
 from pyvi import ViTokenizer
 import unicodedata
-from underthesea import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+import py_vncorenlp
+import difflib
 
 
 # --- CÁC HÀM TIỆN ÍCH ---
@@ -29,7 +30,7 @@ def remove_vietnamese_stopwords(tokenized_text):
         'là', 'và', 'có', 'của', 'trong', 'được', 'cho', 'với', 'tại', 'từ',
         'bởi', 'để', 'như', 'thì', 'mà', 'này', 'kia', 'đó', 'nào', 'cái',
         'những', 'một', 'các', 'đã', 'lại', 'còn', 'nếu', 'vì', 'do', 'bị',
-        'về', 'trường', 'thpt', 'ten', 'lơ', 'man', 'men', 'ernst', 'thalmann'
+        'về'
     ]
     tokens = tokenized_text.split() if isinstance(tokenized_text, str) else tokenized_text
     return [token for token in tokens if token not in stopwords]
@@ -90,7 +91,9 @@ def find_answer(core_question):
 
 
 def split_sticky_words(text):
-    return word_tokenize(text, format="text")
+    # Use VnCoreNLP for word segmentation
+    segments = vncorenlp_model.word_segment(text)
+    return ' '.join(segments)
 
 
 # --- CẤU HÌNH VÀ TẢI DỮ LIỆU ---
@@ -126,6 +129,14 @@ except Exception as e:
     st.error(f"Lỗi khi tải TfidfVectorizer: {e}")
     tfidf_vectorizer = None
 
+# Initialize VnCoreNLP for word segmentation
+@st.cache_resource
+def load_vncorenlp_model():
+    return py_vncorenlp.VnCoreNLP(save_dir=os.path.join(os.path.dirname(__file__), 'vncorenlp'))
+
+
+vncorenlp_model = load_vncorenlp_model()
+
 # Cập nhật quy trình mã hóa dữ liệu
 if model and tfidf_vectorizer and 'question_embeddings' not in st.session_state:
     st.session_state.question_texts = []
@@ -156,12 +167,40 @@ if model and tfidf_vectorizer and 'question_embeddings' not in st.session_state:
 
 
 # --- HÀM TÌM KIẾM CÂU TRẢ LỜI (HYBRID SEARCH) ---
+def fuzzy_match_question(user_question, admissions_data, min_ratio=0.7):
+    """
+    Fuzzy match user question against all question variants in admissions_data.
+    Returns (answer, images, captions) if found, else None.
+    """
+    user_question_norm = normalize_text(user_question)
+    best_ratio = 0
+    best_item = None
+    for item in admissions_data.get('questions', []):
+        questions = item.get('question', [])
+        if isinstance(questions, str):
+            questions = [questions]
+        for q in questions:
+            q_norm = normalize_text(q)
+            ratio = difflib.SequenceMatcher(None, user_question_norm, q_norm).ratio()
+            if user_question_norm in q_norm or q_norm in user_question_norm:
+                ratio += 0.2  # boost for substring
+            if ratio > best_ratio:
+                best_ratio = ratio
+                best_item = item
+    if best_item and best_ratio >= min_ratio:
+        return best_item.get('answer'), best_item.get('images'), best_item.get('captions')
+    return None
+
+
 def find_answer_and_media(question):
     if not model or st.session_state.question_embeddings is None or st.session_state.tfidf_matrix is None:
         return "Chatbot đang gặp sự cố, vui lòng thử lại sau.", "text", None
 
     norm_question = normalize_text(question)
     school_pattern = r"(trường\s*thpt|thpt|trường\s*trung\s*học\s*phổ\s*thông|trung\s*học\s*phổ\s*thông|ten\s*lơ\s*men|ten\s*lơ\s*man|ten-lơ-man|ten-lơ-men|trường\s*cấp\s*3|cấp\s*3|cấp\s*ba|trường\s*cấp\s*ba|ernst\s*thälmann|ernst\s*thalmann|trường\s*công\s*lập|công\s*lập|tlm|t.l.m|t l m|trường\s*ten\s*lơ\s*man|trường\s*ten\s*lơ\s*men|truong\s*thpt|truong\s*trung\s*hoc\s*pho\s*thong|truong\s*cap\s*3|truong\s*cap\s*ba|truong\s*cong\s*lap|truong\s*ten\s*lo\s*man|truong\s*ten\s*lo\s*men|trường\s*ernst|trường\s*ernst\s*thälmann|trường\s*ernst\s*thalmann|ernst|trường\s*tlm|trường\s*t.l.m|trường\s*t l m|school|high\s*school|secondary\s*school|tenlo man|tenlo men|tenloman|tenlomen|trường\s*tenlo man|trường\s*tenlo men|trường\s*tenloman|trường\s*tenlomen)"
+    # Only remove school name if the question is just the school name
+    if re.fullmatch(rf"(\s*{school_pattern}\s*)+", norm_question, flags=re.IGNORECASE):
+        return get_school_info_answer(), "text", None
     core_question = re.sub(school_pattern, "", norm_question, flags=re.IGNORECASE).strip()
     if not core_question or core_question in ['về', 'của']:
         return get_school_info_answer(), "text", None
@@ -174,7 +213,17 @@ def find_answer_and_media(question):
     tokenized_question = ViTokenizer.tokenize(split_question)
     clean_question = ' '.join(remove_vietnamese_stopwords(tokenized_question.split()))
     unaccented_clean_question = remove_vietnamese_accents(clean_question)
-    if not unaccented_clean_question.strip() or len(unaccented_clean_question.split()) < 2:
+    # Accept questions with at least 1 word
+    if not unaccented_clean_question.strip() or len(unaccented_clean_question.split()) < 1:
+        # Fuzzy match fallback for very short queries
+        fuzzy_result = fuzzy_match_question(question, admissions_data)
+        if fuzzy_result:
+            answer, images, captions = fuzzy_result
+            if images and isinstance(images, str):
+                images = [images]
+            if images:
+                return answer, "image", (images, captions)
+            return answer, "text", None
         return "Câu hỏi của bạn quá ngắn hoặc không rõ ràng, vui lòng cung cấp thêm chi tiết.", "text", None
 
     # Hybrid Search
@@ -197,6 +246,15 @@ def find_answer_and_media(question):
 
     # Nếu không vượt ngưỡng, gợi ý các câu hỏi liên quan
     if best_score < threshold:
+        # Fuzzy match fallback for low confidence
+        fuzzy_result = fuzzy_match_question(question, admissions_data)
+        if fuzzy_result:
+            answer, images, captions = fuzzy_result
+            if images and isinstance(images, str):
+                images = [images]
+            if images:
+                return answer, "image", (images, captions)
+            return answer, "text", None
         related_questions = []
         for i in top_indices:
             score = hybrid_scores[i]
@@ -261,8 +319,7 @@ def main():
                     for i, img_path in enumerate(valid_images_paths):
                         with cols[i % num_cols]:
                             st.image(img_path,
-                                     caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
-                                     use_container_width=True)
+                                     caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}")
 
     if prompt := st.chat_input("Câu hỏi của bạn:"):
         st.session_state.messages.append({"role": "user", "text": prompt})
@@ -281,20 +338,23 @@ def main():
                 st.markdown(response)
                 images, captions = media_content
                 if images:
-                    valid_images_paths = [img_path for img_path in images if
-                                          isinstance(img_path, str) and os.path.exists(
-                                              img_path) and img_path.strip() != ""]
+                    valid_images_paths = []
+                    for img_path in images:
+                        if isinstance(img_path, str) and img_path.strip() != "":
+                            abs_img_path = os.path.join(os.path.dirname(__file__), img_path)
+                            if os.path.exists(abs_img_path):
+                                valid_images_paths.append(abs_img_path)
+                            else:
+                                st.warning(f"Không tìm thấy hình ảnh: {img_path}")
                     if valid_images_paths:
                         num_cols = min(len(valid_images_paths), 3)
                         cols = st.columns(num_cols)
                         if not isinstance(captions, list):
-                            captions = [captions] if captions else [f"Ảnh {i + 1}" for i in
-                                                                    range(len(valid_images_paths))]
+                            captions = [captions] if captions else [f"Ảnh {i + 1}" for i in range(len(valid_images_paths))]
                         captions = captions[:len(valid_images_paths)]
-                        for i, img_path in enumerate(valid_images_paths):
+                        for i, abs_img_path in enumerate(valid_images_paths):
                             with cols[i % num_cols]:
-                                st.image(img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}",
-                                         use_container_width=True)
+                                st.image(abs_img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}")
                 st.session_state.messages.append(
                     {"role": "assistant", "text": response, "images": images, "captions": captions})
             else:
