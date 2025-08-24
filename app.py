@@ -42,6 +42,18 @@ def normalize_text(text):
     return text
 
 
+def split_subquestions(text):
+    """
+    Tách câu hỏi thành các ý nhỏ dựa vào các từ nối phổ biến như 'và', dấu phẩy, hoặc dùng word segment.
+    """
+    # Tách bằng 'và', dấu phẩy, hoặc các từ nối phổ biến
+    text = text.replace(' vs ', ' và ')
+    subqs = re.split(r'[;,]|\b(và|hay|hoặc)\b', text)
+    # Loại bỏ ý quá ngắn hoặc trống
+    subqs = [q.strip() for q in subqs if q and len(q.strip()) > 2]
+    return subqs
+
+
 def get_answer(question):
     norm_question = normalize_text(question)
     SCHOOL_NAME_VARIANTS = [
@@ -57,15 +69,26 @@ def get_answer(question):
     school_pattern = r"(" + r"|".join(
         [re.escape(variant).replace(" ", r"\\s*") for variant in SCHOOL_NAME_VARIANTS]) + r")"
     if re.fullmatch(rf"(\s*{school_pattern}\s*)+", norm_question, flags=re.IGNORECASE):
-        return get_school_info_answer()
+        ans, media_type, media_content = find_answer_and_media(norm_question)
+        return [{"text": ans, "media_type": media_type, "media_content": media_content}]
     core_question = re.sub(school_pattern, "", norm_question, flags=re.IGNORECASE).strip()
     if not core_question or core_question in ["", "về", "của"]:
-        return get_school_info_answer()
-    tokens = core_question.split()
-    tokens = [t for t in tokens if t not in ["về", "của"]]
-    if not tokens:
-        return get_school_info_answer()
-    return find_answer(core_question)
+        ans, media_type, media_content = find_answer_and_media(norm_question)
+        return [{"text": ans, "media_type": media_type, "media_content": media_content}]
+    # TÁCH Ý NHỎ
+    sub_questions = split_subquestions(core_question)
+    if len(sub_questions) <= 1:
+        ans, media_type, media_content = find_answer_and_media(core_question)
+        return [{"text": ans, "media_type": media_type, "media_content": media_content}]
+    # Nếu có nhiều ý nhỏ, trả về từng câu trả lời
+    results = []
+    for subq in sub_questions:
+        ans, media_type, media_content = find_answer_and_media(subq)
+        if ans and ans.strip():
+            results.append({"text": f"- {subq}: {ans}", "media_type": media_type, "media_content": media_content})
+    if results:
+        return results
+    return [{"text": "Xin lỗi, tôi chưa tìm thấy thông tin phù hợp cho các ý bạn hỏi.", "media_type": "text", "media_content": None}]
 
 
 def get_school_info_answer():
@@ -327,39 +350,34 @@ def main():
             st.markdown(prompt)
 
         with st.spinner("Đang xử lý câu hỏi..."):
-            response, media_type, media_content = find_answer_and_media(prompt)
+            responses = get_answer(prompt)
 
         with st.chat_message("assistant"):
-            if media_type == "video":
-                st.markdown(response)
-                st.video(media_content)
-                st.session_state.messages.append({"role": "assistant", "text": response, "video": media_content})
-            elif media_type == "image":
-                st.markdown(response)
-                images, captions = media_content
-                if images:
-                    valid_images_paths = []
-                    for img_path in images:
-                        if isinstance(img_path, str) and img_path.strip() != "":
-                            abs_img_path = os.path.join(os.path.dirname(__file__), img_path)
-                            if os.path.exists(abs_img_path):
-                                valid_images_paths.append(abs_img_path)
-                            else:
-                                st.warning(f"Không tìm thấy hình ảnh: {img_path}")
-                    if valid_images_paths:
-                        num_cols = min(len(valid_images_paths), 3)
-                        cols = st.columns(num_cols)
-                        if not isinstance(captions, list):
-                            captions = [captions] if captions else [f"Ảnh {i + 1}" for i in range(len(valid_images_paths))]
-                        captions = captions[:len(valid_images_paths)]
-                        for i, abs_img_path in enumerate(valid_images_paths):
-                            with cols[i % num_cols]:
-                                st.image(abs_img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}")
-                st.session_state.messages.append(
-                    {"role": "assistant", "text": response, "images": images, "captions": captions})
-            else:
-                st.markdown(response)
-                st.session_state.messages.append({"role": "assistant", "text": response})
+            for resp in responses:
+                st.markdown(resp["text"])
+                if resp["media_type"] == "video" and resp["media_content"]:
+                    st.video(resp["media_content"])
+                elif resp["media_type"] == "image" and resp["media_content"]:
+                    images, captions = resp["media_content"]
+                    if images:
+                        valid_images_paths = []
+                        for img_path in images:
+                            if isinstance(img_path, str) and img_path.strip() != "":
+                                abs_img_path = os.path.join(os.path.dirname(__file__), img_path)
+                                if os.path.exists(abs_img_path):
+                                    valid_images_paths.append(abs_img_path)
+                                else:
+                                    st.warning(f"Không tìm thấy hình ảnh: {img_path}")
+                        if valid_images_paths:
+                            num_cols = min(len(valid_images_paths), 3)
+                            cols = st.columns(num_cols)
+                            if not isinstance(captions, list):
+                                captions = [captions] if captions else [f"Ảnh {i + 1}" for i in range(len(valid_images_paths))]
+                            captions = captions[:len(valid_images_paths)]
+                            for i, abs_img_path in enumerate(valid_images_paths):
+                                with cols[i % num_cols]:
+                                    st.image(abs_img_path, caption=captions[i] if i < len(captions) else f"Ảnh {i + 1}")
+            st.session_state.messages.append({"role": "assistant", "text": '\n'.join([r["text"] for r in responses])})
 
     col1, col2 = st.columns(2)
     with col1:
