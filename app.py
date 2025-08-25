@@ -50,13 +50,13 @@ def normalize_text(text):
 
 
 def add_li_ly_variants(keyword):
-    # Add both 'li' and 'ly' variants for Vietnamese spelling
+    # Thêm cả hai biến thể 'li' và 'ly' cho chính tả tiếng Việt
     variants = set([keyword])
     if ' li ' in f' {keyword} ':
         variants.add(keyword.replace(' li ', ' ly '))
     if ' ly ' in f' {keyword} ':
         variants.add(keyword.replace(' ly ', ' li '))
-    # Also handle at end/start
+    # Xử lý ở đầu/cuối từ
     if keyword.endswith('li'):
         variants.add(keyword[:-2] + 'ly')
     if keyword.endswith('ly'):
@@ -68,7 +68,7 @@ def add_li_ly_variants(keyword):
     return variants
 
 def get_all_question_keywords():
-    # Extract all question keywords from admissions_data.json, normalize and remove diacritics
+    # Trích xuất tất cả từ khóa câu hỏi từ admissions_data.json, chuẩn hóa và loại bỏ dấu
     keywords = set()
     for item in admissions_data.get('questions', []):
         questions = item.get('question', [])
@@ -77,30 +77,30 @@ def get_all_question_keywords():
         for q in questions:
             norm_q = normalize_text(q)
             unaccented_q = remove_vietnamese_accents(norm_q)
-            # Add both diacritic and non-diacritic forms
+            # Thêm cả dạng có dấu và không dấu
             if len(norm_q) > 2:
                 for v in add_li_ly_variants(norm_q):
                     keywords.add(v)
             if len(unaccented_q) > 2:
                 for v in add_li_ly_variants(unaccented_q):
                     keywords.add(v)
-    # Sort by length descending to avoid partial matches
+    # Sắp xếp theo độ dài giảm dần để tránh trùng lặp một phần
     return sorted(keywords, key=lambda x: -len(x))
 
 QUESTION_KEYWORDS = get_all_question_keywords()
 
-# Helper: normalize and remove diacritics for all matching
+# Hàm phụ: chuẩn hóa và loại bỏ dấu cho tất cả thao tác so khớp
 def normalize_and_unaccent(text):
     norm = remove_vietnamese_accents(normalize_text(text))
-    # Map 'ly' to 'li' for matching
+    # Chuyển 'ly' thành 'li' để so khớp
     norm = re.sub(r'\bly\b', 'li', norm)
     return norm
 
-# Improved splitting for multi-idea, non-diacritic text
+# Tách ý nhỏ cho câu hỏi nhiều ý, không dấu
 
 def split_subquestions(text):
     norm_text = normalize_and_unaccent(text)
-    # Only split by explicit conjunctions, not by keyword overlap
+    # Chỉ tách theo các liên từ rõ ràng, không tách theo trùng từ khóa
     conjunctions = [r'và', r'hay', r'hoặc', r'va', r'hoac']
     pattern = r'[;,]|\b(' + '|'.join(conjunctions) + r')\b'
     subqs = re.split(pattern, norm_text)
@@ -168,7 +168,7 @@ def find_answer(core_question):
 
 
 def split_sticky_words(text):
-    # Use VnCoreNLP for word segmentation
+    # Sử dụng VnCoreNLP để tách từ
     segments = vncorenlp_model.word_segment(text)
     return ' '.join(segments)
 
@@ -266,8 +266,7 @@ def fuzzy_match_question(user_question, admissions_data, min_ratio=0.7):
         return best_item.get('answer'), best_item.get('images'), best_item.get('captions')
     return None
 
-
-# Build a lookup dictionary for direct keyword matching
+# Tạo từ điển tra cứu cho so khớp từ khóa trực tiếp
 KEYWORD_ANSWER_MAP = {}
 for item in admissions_data.get('questions', []):
     questions = item.get('question', [])
@@ -276,11 +275,11 @@ for item in admissions_data.get('questions', []):
     for q in questions:
         norm_q = normalize_text(q)
         unaccented_q = remove_vietnamese_accents(norm_q)
-        # Only add diacritic and non-diacritic forms
+        # Chỉ thêm dạng có dấu và không dấu
         KEYWORD_ANSWER_MAP[norm_q] = item
         KEYWORD_ANSWER_MAP[unaccented_q] = item
 
-# Build a set of all normalized/unaccented keywords for partial/token matching
+# Tạo tập hợp tất cả từ khóa đã chuẩn hóa/loại dấu để so khớp từng phần/từng từ
 ALL_KEYWORDS_SET = set()
 KEYWORD_TO_ITEM_MAP = {}
 for item in admissions_data.get('questions', []):
@@ -300,7 +299,7 @@ def find_answer_and_media(question):
     if not model or st.session_state.question_embeddings is None or st.session_state.tfidf_matrix is None:
         return "Chatbot đang gặp sự cố, vui lòng thử lại sau.", "text", None
     norm_question = normalize_and_unaccent(question)
-    # Direct keyword lookup (prioritize exact match)
+    # Tra cứu từ khóa trực tiếp (ưu tiên khớp chính xác)
     direct_item = KEYWORD_ANSWER_MAP.get(norm_question)
     if direct_item:
         answer = direct_item.get('answer', "Không có câu trả lời.")
@@ -318,7 +317,7 @@ def find_answer_and_media(question):
     tokens = norm_question.split()
     num_tokens = len(tokens)
 
-    # 1. Exact match (normalized and unaccented)
+    # 1. Khớp chính xác (đã chuẩn hóa và loại dấu)
     direct_item = KEYWORD_TO_ITEM_MAP.get(norm_question)
     if direct_item:
         answer = direct_item.get('answer', "Không có câu trả lời.")
@@ -333,7 +332,7 @@ def find_answer_and_media(question):
             return answer, "image", (images, captions)
         return answer, "text", None
 
-    # 2. N-gram phrase matching (from longest to shortest)
+    # 2. Khớp cụm từ n-gram (từ dài nhất đến ngắn nhất)
     phrase_matches = []
     for length in range(num_tokens, 1, -1):
         for i in range(num_tokens - length + 1):
@@ -341,9 +340,9 @@ def find_answer_and_media(question):
             item = KEYWORD_TO_ITEM_MAP.get(phrase)
             if item:
                 phrase_matches.append((phrase, item, length))
-    # If any phrase match exists, always return only the best phrase match and skip token matching
+    # Nếu có khớp cụm từ, luôn trả về cụm từ tốt nhất và bỏ qua khớp từng từ
     if phrase_matches:
-        # Find the phrase match with the longest length and highest priority
+        # Tìm cụm từ khớp dài nhất và ưu tiên cao nhất
         phrase_matches.sort(key=lambda x: (-x[2], -len(x[0])))
         best_phrase, best_item, _ = phrase_matches[0]
         answer = best_item.get('answer', "Không có câu trả lời.")
@@ -358,7 +357,7 @@ def find_answer_and_media(question):
             return answer, "image", (images, captions)
         return answer, "text", None
 
-    # 3. For 2-token queries, try the two-word phrase
+    # 3. Nếu truy vấn có 2 từ, thử khớp cụm từ 2 từ
     if num_tokens == 2:
         phrase = ' '.join(tokens)
         item = KEYWORD_TO_ITEM_MAP.get(phrase)
@@ -375,10 +374,10 @@ def find_answer_and_media(question):
                 return answer, "image", (images, captions)
             return answer, "text", None
 
-    # 4. For queries with >2 tokens, fallback to single token matching only if no phrase match
+    # 4. Nếu truy vấn >2 từ, chuyển sang khớp từng từ nếu không có khớp cụm từ
     matched_items = []
     matched_tokens = []
-    # Only perform token matching if no phrase match exists
+    # Chỉ thực hiện khớp từng từ nếu không c�� khớp cụm từ
     if num_tokens > 2 and not phrase_matches:
         best_token_item = None
         best_token_length = 0
@@ -401,7 +400,7 @@ def find_answer_and_media(question):
             if images:
                 return answer, "image", (images, captions)
             return answer, "text", None
-        # If no best_token_item, try single token matching (but only return the best one)
+        # Nếu không có best_token_item, thử khớp từng từ (chỉ trả về cái tốt nhất)
         for token in tokens:
             item = KEYWORD_TO_ITEM_MAP.get(token)
             if item and item not in matched_items:
@@ -447,7 +446,7 @@ def find_answer_and_media(question):
                 return answer, "image", (images, captions)
             return answer, "text", None
 
-    # 5. Fuzzy matching as last resort
+    # 5. Khớp mờ (fuzzy matching) là phương án cuối cùng
     fuzzy_result = fuzzy_match_question(question, admissions_data, min_ratio=0.6)
     if fuzzy_result:
         answer, images, captions = fuzzy_result
@@ -465,7 +464,7 @@ def find_answer_and_media(question):
             return answer, "image", (images, captions)
         return answer, "text", None
 
-    # No match found
+    # Không tìm thấy kết quả phù hợp
     return "Xin lỗi, tôi chưa tìm thấy thông tin phù hợp.", "text", None
 
 
