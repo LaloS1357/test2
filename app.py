@@ -1,5 +1,4 @@
 # Copyright (c) [2025] [Nguyễn Minh Tấn Phúc]. Bảo lưu mọi quyền.
-# Nguồn: https://tlmchattest.streamlit.app/
 import json
 import os
 import re
