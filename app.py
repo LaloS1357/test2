@@ -13,8 +13,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import py_vncorenlp
 import difflib
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-import random
 
 # --- CẤU HÌNH VÀ TẢI DỮ LIỆU ---
 try:
@@ -218,28 +216,6 @@ def load_vncorenlp_model():
 
 vncorenlp_model = load_vncorenlp_model()
 
-# Tải mô hình paraphrase T5 cho tiếng Việt
-@st.cache_resource
-def load_paraphrase_model():
-    tokenizer = AutoTokenizer.from_pretrained("VietAI/vit5-base-vietnews-summarization")
-    model = AutoModelForSeq2SeqLM.from_pretrained("VietAI/vit5-base-vietnews-summarization")
-    return tokenizer, model
-
-paraphrase_tokenizer, paraphrase_model = load_paraphrase_model()
-
-def generate_paraphrases(text, num_return_sequences=2):
-    input_text = f"paraphrase: {text}"
-    inputs = paraphrase_tokenizer([input_text], return_tensors="pt", padding=True, truncation=True)
-    with torch.no_grad():
-        outputs = paraphrase_model.generate(
-            **inputs,
-            max_length=128,
-            num_beams=10,
-            num_return_sequences=num_return_sequences,
-            temperature=1.5
-        )
-    return [paraphrase_tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
-
 # Cập nhật quy trình mã hóa dữ liệu
 if model and tfidf_vectorizer and 'question_embeddings' not in st.session_state:
     st.session_state.question_texts = []
@@ -326,18 +302,7 @@ def find_answer_and_media(question):
     # Tra cứu từ khóa trực tiếp (ưu tiên khớp chính xác)
     direct_item = KEYWORD_ANSWER_MAP.get(norm_question)
     if direct_item:
-        answers = direct_item.get('answers')
-        all_answers = []
-        if answers and isinstance(answers, list) and len(answers) > 0:
-            all_answers.extend(answers)
-            # Sinh thêm các câu paraphrase từ câu đầu tiên (nếu chưa có paraphrase)
-            paraphrases = generate_paraphrases(answers[0], num_return_sequences=2)
-            for p in paraphrases:
-                if p not in all_answers:
-                    all_answers.append(p)
-            answer = random.choice(all_answers)
-        else:
-            answer = "Không có câu trả lời."
+        answer = direct_item.get('answer', "Không có câu trả lời.")
         images = direct_item.get('images')
         captions = direct_item.get('captions')
         video_url = direct_item.get('video_url')
@@ -355,17 +320,7 @@ def find_answer_and_media(question):
     # 1. Khớp chính xác (đã chuẩn hóa và loại dấu)
     direct_item = KEYWORD_TO_ITEM_MAP.get(norm_question)
     if direct_item:
-        answers = direct_item.get('answers')
-        all_answers = []
-        if answers and isinstance(answers, list) and len(answers) > 0:
-            all_answers.extend(answers)
-            paraphrases = generate_paraphrases(answers[0], num_return_sequences=2)
-            for p in paraphrases:
-                if p not in all_answers:
-                    all_answers.append(p)
-            answer = random.choice(all_answers)
-        else:
-            answer = "Không có câu trả lời."
+        answer = direct_item.get('answer', "Không có câu trả lời.")
         images = direct_item.get('images')
         captions = direct_item.get('captions')
         video_url = direct_item.get('video_url')
