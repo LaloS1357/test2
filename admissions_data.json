@@ -45,8 +45,8 @@
     },
     {
       "question": ["điểm chuẩn 4 năm gần nhất", "điểm chuẩn bao nhiêu", "điểm chuẩn là bao nhiêu", "điểm chuẩn năm nay","điểm chuẩn của trường"],
-      "answer": "Điểm chuẩn qua các năm: 2022 là 17.75, 2023 là 18.25, 2024 là 18.25, và 2025 là 18",
-      "images": null,
+      "answer": "Đây là điểm chuẩn của trường qua các năm",
+      "images": "images/dccn.jpg",
       "captions": null
     },
     {
